@@ -99,7 +99,14 @@ function readSettings() {
   try {
     return JSON.parse(fs.readFileSync(SETTINGS_FILE, 'utf8'));
   } catch (e) {
-    return { whatsappNumber: '919876543210', storeAddress: 'Karol Bagh, New Delhi - 110005', adminPin: '8080' };
+    return {
+      whatsappNumber: '917303039323',
+      secondaryWhatsappNumber: '916378599513',
+      instagramUrl: 'https://www.instagram.com/fixmykickss.in',
+      telegramUrl: 'https://t.me/yashaswani77',
+      storeAddress: 'Karol Bagh, New Delhi - 110005',
+      adminPin: '8080'
+    };
   }
 }
 
@@ -121,24 +128,26 @@ function writeBrands(brands) {
 }
 
 /**
- * Save a base64 data URL image from admin's system to /uploads folder
+ * Save a backup copy of the uploaded image to /uploads folder
+ * and retain the compressed data URL so products.json & IndexedDB remain 100% self-contained on cloud hosts.
  */
 function saveUploadedImage(dataUrl, sku, index) {
   if (!dataUrl || !dataUrl.startsWith('data:image/')) {
-    return dataUrl; // Already a file path
+    return dataUrl;
   }
-  const matches = dataUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
-  if (!matches) return null;
-
-  let ext = matches[1].toLowerCase();
-  if (ext === 'jpeg') ext = 'jpg';
-  if (ext === 'svg+xml') ext = 'svg';
-  const base64Data = matches[2];
-  const filename = `${sku.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}-${index}.${ext}`;
-  const filePath = path.join(UPLOADS_DIR, filename);
-
-  fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
-  return `uploads/${filename}`;
+  try {
+    const matches = dataUrl.match(/^data:image\/([a-zA-Z0-9+]+);base64,(.+)$/);
+    if (matches) {
+      let ext = matches[1].toLowerCase();
+      if (ext === 'jpeg') ext = 'jpg';
+      if (ext === 'svg+xml') ext = 'svg';
+      const base64Data = matches[2];
+      const filename = `${sku.toLowerCase().replace(/[^a-z0-9]/g, '-')}-${Date.now()}-${index}.${ext}`;
+      const filePath = path.join(UPLOADS_DIR, filename);
+      fs.writeFileSync(filePath, Buffer.from(base64Data, 'base64'));
+    }
+  } catch (_) {}
+  return dataUrl;
 }
 
 function parseJsonBody(req) {
@@ -205,10 +214,15 @@ const server = http.createServer(async (req, res) => {
         edition: payload.edition || 'Master Edition',
         description: payload.description || '',
         inStock: payload.inStock !== false,
-        createdAt: new Date().toISOString()
+        createdAt: payload.createdAt || new Date().toISOString()
       };
 
-      products.unshift(newShoe);
+      const existingIdx = products.findIndex(p => p.id === sku);
+      if (existingIdx !== -1) {
+        products[existingIdx] = newShoe;
+      } else {
+        products.unshift(newShoe);
+      }
       writeProducts(products);
 
       res.writeHead(201, { 'Content-Type': 'application/json' });
