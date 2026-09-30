@@ -1035,10 +1035,9 @@
           <input 
             type="text" 
             id="setting-whatsapp-num" 
-            placeholder="917303039323" 
+            placeholder="Enter WhatsApp Number" 
             class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 font-mono text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
           />
-          <span class="text-[11px] text-neutral-500 mt-1 block">Default: 917303039323 (+91-7303039323)</span>
         </div>
 
         <div>
@@ -1048,8 +1047,20 @@
           <input 
             type="text" 
             id="setting-store-address" 
-            placeholder="Karol Bagh, New Delhi - 110005" 
+            placeholder="Enter Store Location" 
             class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
+          />
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+            Change Admin PIN / Password
+          </label>
+          <input 
+            type="password" 
+            id="setting-admin-pin" 
+            placeholder="Enter new Admin PIN" 
+            class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 font-mono text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
           />
         </div>
 
@@ -1076,7 +1087,7 @@
           Admin Login
         </h3>
         <p class="text-neutral-500 text-xs mt-1">
-          Enter your store PIN to upload shoes from your device, add brands, or edit inventory.
+          Enter your store PIN to manage inventory and brands.
         </p>
       </div>
 
@@ -1088,11 +1099,10 @@
           <input 
             type="password" 
             id="admin-pin-input" 
-            placeholder="Enter PIN (Default: 8080)" 
+            placeholder="Enter Admin PIN" 
             required 
             class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
           />
-          <span class="text-[11px] text-neutral-400 mt-1 block">Default PIN: 8080</span>
         </div>
 
         <div id="admin-login-error" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-[#D90429] text-xs font-semibold">

@@ -1903,8 +1903,10 @@ function openSettingsModal() {
   }
   const waInput = document.getElementById('setting-whatsapp-num');
   const addrInput = document.getElementById('setting-store-address');
+  const pinInput = document.getElementById('setting-admin-pin');
   if (waInput) waInput.value = state.whatsappNumber;
   if (addrInput) addrInput.value = state.storeAddress;
+  if (pinInput) pinInput.value = state.adminPin;
 
   const modal = document.getElementById('settings-modal');
   if (modal) modal.classList.remove('hidden');
@@ -1918,6 +1920,7 @@ function closeSettingsModal() {
 async function saveStoreSettings() {
   const waInput = document.getElementById('setting-whatsapp-num');
   const addrInput = document.getElementById('setting-store-address');
+  const pinInput = document.getElementById('setting-admin-pin');
 
   if (waInput && waInput.value.trim()) {
     state.whatsappNumber = waInput.value.trim().replace(/[^0-9]/g, '');
@@ -1929,20 +1932,26 @@ async function saveStoreSettings() {
     localStorage.setItem('fmk_store_address', state.storeAddress);
   }
 
+  if (pinInput && pinInput.value.trim()) {
+    state.adminPin = pinInput.value.trim();
+    localStorage.setItem('fmk_admin_pin', state.adminPin);
+  }
+
   try {
     await fetch('/api/settings', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         whatsappNumber: state.whatsappNumber,
-        storeAddress: state.storeAddress
+        storeAddress: state.storeAddress,
+        adminPin: state.adminPin
       })
     });
   } catch (_) {}
 
   updateStoreSettingsUI();
   closeSettingsModal();
-  showToast('Store settings saved.');
+  showToast('Store settings & Admin PIN saved.');
 }
 
 function updateStoreSettingsUI() {
