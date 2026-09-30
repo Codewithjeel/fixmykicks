@@ -1549,7 +1549,13 @@ function openAdminPortal() {
     const err = document.getElementById('admin-login-error');
     const pinInput = document.getElementById('admin-pin-input');
     if (err) err.classList.add('hidden');
-    if (pinInput) pinInput.value = '';
+    if (pinInput) {
+      pinInput.value = '';
+      pinInput.placeholder = 'Enter Admin PIN';
+      if (pinInput.nextElementSibling && pinInput.nextElementSibling.tagName === 'SPAN') {
+        pinInput.nextElementSibling.remove();
+      }
+    }
     if (modal) modal.classList.remove('hidden');
   }
 }
