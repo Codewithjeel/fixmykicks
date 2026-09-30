@@ -1,0 +1,295 @@
+/**
+ * FixMyKicks Delhi — Dynamic Inventory & Brand Storage Engine
+ * - Zero dummy products (displays only real shoes uploaded by Admin)
+ * - Dynamic Brands API (Admin can add/remove any brand)
+ * - Uses local server API (/api/products & /api/brands) with IndexedDB/localStorage fallback
+ */
+
+const DEFAULT_STORE_BRANDS = [
+  "Nike",
+  "Adidas",
+  "On Cloud",
+  "New Balance",
+  "Birkenstock",
+  "Crocs",
+  "Puma"
+];
+
+const STORE_CATEGORIES = [
+  "Sneakers",
+  "Running",
+  "High Tops",
+  "Low Tops",
+  "Clogs & Mules",
+  "Slides & Sandals",
+  "Basketball"
+];
+
+const STANDARD_SIZES = [
+  { uk: "UK 5", eu: "EU 38", cm: "23.5 cm" },
+  { uk: "UK 6", eu: "EU 40", cm: "24.5 cm" },
+  { uk: "UK 7", eu: "EU 41", cm: "25.5 cm" },
+  { uk: "UK 8", eu: "EU 42", cm: "26.5 cm" },
+  { uk: "UK 9", eu: "EU 43", cm: "27.5 cm" },
+  { uk: "UK 10", eu: "EU 44", cm: "28.5 cm" },
+  { uk: "UK 11", eu: "EU 45", cm: "29.5 cm" },
+  { uk: "UK 12", eu: "EU 46", cm: "30.5 cm" }
+];
+
+/**
+ * Dynamic Brands API (Server + LocalStorage Sync)
+ */
+const BrandsAPI = {
+  async fetchAll() {
+    try {
+      const res = await fetch('/api/brands', { cache: 'no-store' });
+      if (res.ok) {
+        const list = await res.json();
+        if (Array.isArray(list) && list.length > 0) {
+          localStorage.setItem('fmk_brands', JSON.stringify(list));
+          return list;
+        }
+      }
+    } catch (_) {}
+
+    try {
+      const saved = JSON.parse(localStorage.getItem('fmk_brands') || 'null');
+      if (Array.isArray(saved) && saved.length > 0) return saved;
+    } catch (_) {}
+
+    localStorage.setItem('fmk_brands', JSON.stringify(DEFAULT_STORE_BRANDS));
+    return [...DEFAULT_STORE_BRANDS];
+  },
+
+  async add(brandName) {
+    const clean = (brandName || '').trim();
+    if (!clean) return await this.fetchAll();
+
+    try {
+      const res = await fetch('/api/brands', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: clean })
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        localStorage.setItem('fmk_brands', JSON.stringify(updated));
+        return updated;
+      }
+    } catch (_) {}
+
+    const current = await this.fetchAll();
+    if (!current.some(b => b.toLowerCase() === clean.toLowerCase())) {
+      current.push(clean);
+      localStorage.setItem('fmk_brands', JSON.stringify(current));
+    }
+    return current;
+  },
+
+  async remove(brandName) {
+    const clean = (brandName || '').trim();
+    try {
+      const res = await fetch(`/api/brands/${encodeURIComponent(clean)}`, { method: 'DELETE' });
+      if (res.ok) {
+        const updated = await res.json();
+        localStorage.setItem('fmk_brands', JSON.stringify(updated));
+        return updated;
+      }
+    } catch (_) {}
+
+    let current = await this.fetchAll();
+    current = current.filter(b => b.toLowerCase() !== clean.toLowerCase());
+    localStorage.setItem('fmk_brands', JSON.stringify(current));
+    return current;
+  }
+};
+
+/**
+ * IndexedDB Adapter (handles large system photo uploads when opened without server)
+ */
+const IDB_NAME = 'FixMyKicksDB_v2';
+const IDB_STORE = 'shoes';
+
+function openIDB() {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(IDB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      const db = e.target.result;
+      if (!db.objectStoreNames.contains(IDB_STORE)) {
+        db.createObjectStore(IDB_STORE, { keyPath: 'id' });
+      }
+    };
+    req.onsuccess = () => resolve(req.result);
+    req.onerror = () => reject(req.error);
+  });
+}
+
+async function idbGetAll() {
+  try {
+    const db = await openIDB();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction(IDB_STORE, 'readonly');
+      const store = tx.objectStore(IDB_STORE);
+      const req = store.getAll();
+      req.onsuccess = () => {
+        const items = req.result || [];
+        items.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+        resolve(items);
+      };
+      req.onerror = () => reject(req.error);
+    });
+  } catch (_) {
+    return [];
+  }
+}
+
+async function idbSave(product) {
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    const store = tx.objectStore(IDB_STORE);
+    store.put(product);
+    tx.oncomplete = () => resolve(product);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+async function idbDelete(id) {
+  const db = await openIDB();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(IDB_STORE, 'readwrite');
+    const store = tx.objectStore(IDB_STORE);
+    store.delete(id);
+    tx.oncomplete = () => resolve(true);
+    tx.onerror = () => reject(tx.error);
+  });
+}
+
+/**
+ * Unified Inventory API (Server-first + IndexedDB sync)
+ */
+const InventoryAPI = {
+  async fetchAll() {
+    localStorage.removeItem('fmk_custom_products');
+
+    let serverItems = [];
+    let apiAvailable = false;
+
+    try {
+      const res = await fetch('/api/products', { cache: 'no-store' });
+      if (res.ok) {
+        const data = await res.json();
+        if (Array.isArray(data)) {
+          serverItems = data;
+          apiAvailable = true;
+        }
+      }
+    } catch (_) {}
+
+    if (!apiAvailable) {
+      try {
+        const staticRes = await fetch('data/products.json', { cache: 'no-store' });
+        if (staticRes.ok) {
+          const staticData = await staticRes.json();
+          if (Array.isArray(staticData)) {
+            serverItems = staticData;
+          }
+        }
+      } catch (_) {}
+    }
+
+    const localItems = await idbGetAll();
+    const mergedMap = new Map();
+
+    serverItems.forEach(item => {
+      if (item && item.id) mergedMap.set(item.id, item);
+    });
+
+    for (const localItem of localItems) {
+      if (localItem && localItem.id && !mergedMap.has(localItem.id)) {
+        mergedMap.set(localItem.id, localItem);
+        if (apiAvailable) {
+          try {
+            await fetch('/api/products', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(localItem)
+            });
+          } catch (_) {}
+        }
+      }
+    }
+
+    const combined = Array.from(mergedMap.values());
+    combined.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    return combined;
+  },
+
+  async create(productData) {
+    const brandPrefix = (productData.brand || 'FMK').replace(/[^a-zA-Z]/g, '').slice(0, 2).toUpperCase() || 'SH';
+    const uniqueNum = Date.now().toString().slice(-5);
+    const newProduct = {
+      id: productData.id || `FMK-${brandPrefix}-${uniqueNum}`,
+      name: productData.name,
+      brand: productData.brand,
+      category: productData.category || 'Sneakers',
+      price: Number(productData.price) || 0,
+      mrp: Number(productData.mrp) || Number(productData.price) || 0,
+      sizes: productData.sizes || ['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10'],
+      images: productData.images || [],
+      edition: productData.edition || 'Master Edition',
+      description: productData.description || '',
+      inStock: productData.inStock !== false,
+      createdAt: new Date().toISOString()
+    };
+
+    try {
+      const res = await fetch('/api/products', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(newProduct)
+      });
+      if (res.ok) {
+        const saved = await res.json();
+        await idbSave(saved);
+        return saved;
+      }
+    } catch (_) {}
+
+    await idbSave(newProduct);
+    return newProduct;
+  },
+
+  async update(id, productData) {
+    try {
+      const res = await fetch(`/api/products/${encodeURIComponent(id)}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(productData)
+      });
+      if (res.ok) {
+        const updated = await res.json();
+        await idbSave(updated);
+        return updated;
+      }
+    } catch (_) {}
+
+    const updatedProduct = { ...productData, id };
+    await idbSave(updatedProduct);
+    return updatedProduct;
+  },
+
+  async remove(id) {
+    try {
+      await fetch(`/api/products/${encodeURIComponent(id)}`, { method: 'DELETE' });
+    } catch (_) {}
+    await idbDelete(id);
+    return true;
+  }
+};
+
+window.DEFAULT_STORE_BRANDS = DEFAULT_STORE_BRANDS;
+window.STORE_CATEGORIES = STORE_CATEGORIES;
+window.STANDARD_SIZES = STANDARD_SIZES;
+window.BrandsAPI = BrandsAPI;
+window.InventoryAPI = InventoryAPI;

@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>FixMyKicks Delhi — Footwear &amp; Sneaker Store | All India Delivery</title>
+  <meta name="description" content="FixMyKicks Delhi — Browse Nike, Adidas, On Cloud, New Balance, Birkenstock, Crocs, Puma and more footwear brands. Select your UK size and order directly on WhatsApp with All India delivery." />
+  
+  <link rel="icon" type="image/svg+xml" href="assets/logo.svg" />
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            fmk: {
+              red: '#D90429',
+              redDark: '#B50321',
+              black: '#111111',
+              gray: '#F5F5F7'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- FontAwesome Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
+
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="bg-white text-neutral-900 min-h-screen flex flex-col">
+
+  <!-- Top Utility Bar (100% WhatsApp-First, Zero Payment Mentions) -->
+  <div class="bg-[#111111] text-white text-xs py-2 px-4 border-b border-neutral-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-2.5 overflow-hidden whitespace-nowrap text-[11px] sm:text-xs">
+        <span class="inline-block w-2 h-2 rounded-full bg-[#D90429] shrink-0"></span>
+        <span class="font-bold tracking-wide">DELHI STORE &amp; DISPATCH DESK:</span>
+        <a href="https://wa.me/917303039323" target="_blank" class="text-neutral-300 hover:text-white font-mono flex items-center gap-1">
+          <i class="fa-brands fa-whatsapp text-emerald-400"></i> +91 73030 39323
+        </a>
+        <span class="text-neutral-600 hidden sm:inline">•</span>
+        <a href="https://wa.me/916378599513" target="_blank" class="text-neutral-400 hover:text-white font-mono hidden sm:flex items-center gap-1">
+          <i class="fa-brands fa-whatsapp text-emerald-400"></i> +91 63785 99513
+        </a>
+      </div>
+
+      <div class="flex items-center gap-4 text-xs font-medium shrink-0">
+        <a href="https://www.instagram.com/fixmykickss.in" target="_blank" rel="noopener noreferrer" class="text-neutral-300 hover:text-[#E1306C] transition-colors flex items-center gap-1.5" title="Follow us on Instagram">
+          <i class="fa-brands fa-instagram text-sm text-[#E1306C]"></i>
+          <span class="hidden md:inline">@fixmykickss.in</span>
+        </a>
+        <a href="https://t.me/yashaswani77" target="_blank" rel="noopener noreferrer" class="text-neutral-300 hover:text-[#0088cc] transition-colors flex items-center gap-1.5" title="Join us on Telegram">
+          <i class="fa-brands fa-telegram text-sm text-[#0088cc]"></i>
+          <span class="hidden md:inline">Telegram</span>
+        </a>
+        <button onclick="openSizeChartModal()" class="text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5">
+          <i class="fa-solid fa-ruler-horizontal text-[#D90429]"></i>
+          <span>UK Size Guide</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Control Bar (Visible ONLY when Admin is logged in) -->
+  <div id="admin-top-bar" class="hidden bg-neutral-900 text-white text-xs py-2.5 px-4 border-b-2 border-[#D90429] sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
+      <div class="flex items-center gap-2.5">
+        <span class="bg-[#D90429] text-white text-[10px] font-bold uppercase px-2.5 py-0.5 rounded tracking-wider">
+          Admin Mode
+        </span>
+        <span class="text-neutral-300 font-medium hidden sm:inline">
+          FixMyKicks Store Manager — Upload Shoes, Multi-Photo Sliders &amp; Brands
+        </span>
+      </div>
+      <div class="flex items-center gap-2 flex-wrap">
+        <button onclick="openAddProductModal()" class="px-3.5 py-1.5 rounded bg-[#D90429] hover:bg-[#B50321] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors">
+          <i class="fa-solid fa-upload"></i>
+          <span>+ Upload New Shoe</span>
+        </button>
+        <button onclick="openBrandsModal()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-100 font-semibold text-xs flex items-center gap-1.5 border border-neutral-700 transition-colors">
+          <i class="fa-solid fa-tags text-[#D90429]"></i>
+          <span>+ Add / Manage Brands</span>
+        </button>
+        <button onclick="openSettingsModal()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-medium text-xs flex items-center gap-1.5 border border-neutral-700 transition-colors">
+          <i class="fa-solid fa-gear"></i>
+          <span>Store Settings</span>
+        </button>
+        <button onclick="exportLiveCatalog()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-medium text-xs flex items-center gap-1.5 border border-neutral-700 transition-colors" title="Export all active shoes as products.json for static hosting">
+          <i class="fa-solid fa-file-arrow-down text-emerald-400"></i>
+          <span>Export Catalog</span>
+        </button>
+        <button onclick="logoutAdmin()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white text-xs border border-neutral-700 transition-colors">
+          Logout
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main Storefront Header -->
+  <header class="bg-white border-b border-neutral-200 sticky top-0 z-40">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+      
+      <!-- Brand Logo (Aesthetic Gen-Z Logo + Name Only, No Tagline) -->
+      <a href="#" onclick="resetAllFilters(); return false;" class="flex items-center gap-3 shrink-0 group">
+        <img 
+          src="assets/logo.jpg?v=3" 
+          onerror="this.onerror=null; this.src='assets/logo.svg';"
+          alt="Fix My Kicks" 
+          class="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform"
+        />
+        <span class="font-display font-bold text-2xl sm:text-[26px] tracking-tight text-[#111111] uppercase leading-none">
+          FIX <span class="text-[#D90429]">MY</span> KICKS
+        </span>
+      </a>
+
+      <!-- Search Input (Desktop) -->
+      <div class="hidden md:flex flex-1 max-w-md mx-6">
+        <div class="relative w-full">
+          <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-sm"></i>
+          <input 
+            type="text" 
+            id="search-input" 
+            placeholder="Search by brand, shoe name or product code..." 
+            class="w-full pl-10 pr-4 py-2.5 rounded-lg bg-[#F5F5F7] border border-transparent focus:bg-white focus:border-neutral-900 text-sm text-neutral-900 placeholder-neutral-500 focus:outline-none transition-all"
+          />
+        </div>
+      </div>
+
+      <!-- Right Customer Actions: Socials, Multi-Pair WhatsApp Bag + Direct Inquiry -->
+      <div class="flex items-center gap-2 sm:gap-2.5">
+        <!-- Instagram Link Button -->
+        <a 
+          href="https://www.instagram.com/fixmykickss.in" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="w-10 h-10 rounded-lg bg-[#F5F5F7] hover:bg-red-50 text-neutral-700 hover:text-[#E1306C] flex items-center justify-center border border-neutral-200 transition-colors"
+          title="Follow @fixmykickss.in on Instagram">
+          <i class="fa-brands fa-instagram text-base"></i>
+        </a>
+
+        <!-- Telegram Link Button -->
+        <a 
+          href="https://t.me/yashaswani77" 
+          target="_blank" 
+          rel="noopener noreferrer" 
+          class="w-10 h-10 rounded-lg bg-[#F5F5F7] hover:bg-sky-50 text-neutral-700 hover:text-[#0088cc] flex items-center justify-center border border-neutral-200 transition-colors"
+          title="Join t.me/yashaswani77 on Telegram">
+          <i class="fa-brands fa-telegram text-base"></i>
+        </a>
+
+        <!-- Multi-Pair WhatsApp Order Bag Button -->
+        <button 
+          onclick="openOrderBagDrawer()" 
+          class="relative px-3.5 py-2.5 rounded-lg bg-[#F5F5F7] hover:bg-neutral-200 text-neutral-900 text-xs font-bold flex items-center gap-2 border border-neutral-200 transition-colors"
+          title="Shortlist multiple shoes to order together on WhatsApp">
+          <i class="fa-solid fa-bag-shopping text-[#D90429] text-sm"></i>
+          <span class="hidden sm:inline">WhatsApp Bag</span>
+          <span id="order-bag-count" class="px-1.5 py-0.5 rounded-full bg-[#111111] text-white text-[10px] font-bold leading-none">
+            0
+          </span>
+        </button>
+
+        <button 
+          onclick="openGeneralWhatsApp()" 
+          class="px-4 py-2.5 rounded-lg bg-[#111111] hover:bg-[#D90429] text-white text-xs font-semibold flex items-center gap-2 transition-colors">
+          <i class="fa-brands fa-whatsapp text-base text-emerald-400"></i>
+          <span class="hidden sm:inline">Chat on WhatsApp</span>
+          <span class="sm:hidden">Chat</span>
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Mobile Search Bar -->
+    <div class="md:hidden px-4 pb-3">
+      <div class="relative w-full">
+        <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-sm"></i>
+        <input 
+          type="text" 
+          id="search-input-mobile" 
+          placeholder="Search by brand, shoe name or product code..." 
+          class="w-full pl-10 pr-4 py-2 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-sm text-neutral-900 placeholder-neutral-500 focus:outline-none focus:border-neutral-900"
+        />
+      </div>
+    </div>
+
+    <!-- Dynamic Brand Navigation Bar -->
+    <div class="border-t border-neutral-100 bg-white">
+      <div id="header-brands-bar" class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2.5">
+        <!-- Populated dynamically by app.js from BrandsAPI -->
+      </div>
+    </div>
+  </header>
+
+  <!-- Storefront Banner -->
+  <section class="relative bg-[#111111] text-white overflow-hidden">
+    <div class="absolute inset-0">
+      <img 
+        src="assets/hero_topdown_shoes.jpg?v=4" 
+        onerror="this.onerror=null; this.src='assets/hero_banner.jpg?v=4';"
+        alt="Fix My Kicks Top-Down Sneaker & Clog Collection" 
+        class="w-full h-full object-cover object-right"
+      />
+      <div class="absolute inset-0 bg-gradient-to-r from-[#111111]/90 via-[#111111]/45 to-transparent"></div>
+    </div>
+
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-11 sm:py-16">
+      <div class="max-w-2xl">
+        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-semibold mb-4">
+          <span class="w-2 h-2 rounded-full bg-[#D90429]"></span>
+          <span>DELHI STORE • PAN-INDIA DELIVERY • DIRECT WHATSAPP ORDERING</span>
+        </div>
+        <h1 class="font-display text-3xl sm:text-5xl font-bold tracking-tight uppercase leading-tight mb-4">
+          EVERYDAY SNEAKERS, RUNNERS &amp; CLOGS
+        </h1>
+        <p class="text-neutral-300 text-sm sm:text-base leading-relaxed mb-6">
+          Explore our footwear collection across Nike, Adidas, On Cloud, New Balance, Birkenstock, Crocs, Puma and more. Hover or click on any shoe to inspect multiple angles, pick your UK size, and send your order directly to our WhatsApp desk.
+        </p>
+        <div class="flex flex-wrap items-center gap-3">
+          <a href="#catalog-section" class="px-6 py-3 rounded-lg bg-[#D90429] hover:bg-[#B50321] text-white font-semibold text-xs uppercase tracking-wider transition-colors">
+            Browse Footwear
+          </a>
+          <a href="#request-pair-section" class="px-5 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center gap-2">
+            <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i>
+            <span>Request Any Specific Pair</span>
+          </a>
+          <button onclick="openSizeChartModal()" class="px-4 py-3 rounded-lg bg-transparent hover:bg-white/10 border border-white/20 text-neutral-200 font-semibold text-xs uppercase tracking-wider transition-colors">
+            UK Size Guide
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Quick 3-Step "How Ordering Works" Bar (100% WhatsApp, No Payment Gateway) -->
+  <section class="bg-[#F5F5F7] border-b border-neutral-200 py-4 px-4">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 text-xs">
+      <div class="flex items-center gap-3">
+        <span class="w-6 h-6 rounded-full bg-[#111111] text-white font-bold text-[11px] flex items-center justify-center shrink-0">1</span>
+        <span class="text-neutral-700"><strong class="text-neutral-900">Slide Photos &amp; Pick UK Size:</strong> Hover or click on any shoe to view all uploaded angles and select your UK size.</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="w-6 h-6 rounded-full bg-[#D90429] text-white font-bold text-[11px] flex items-center justify-center shrink-0">2</span>
+        <span class="text-neutral-700"><strong class="text-neutral-900">Click "Order Now":</strong> No online checkout forms—your selected shoe &amp; size go straight to our WhatsApp.</span>
+      </div>
+      <div class="flex items-center gap-3">
+        <span class="w-6 h-6 rounded-full bg-[#111111] text-white font-bold text-[11px] flex items-center justify-center shrink-0">3</span>
+        <span class="text-neutral-700"><strong class="text-neutral-900">Instant Confirmation &amp; Dispatch:</strong> Confirm your delivery address on WhatsApp for fast dispatch from Delhi.</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Catalog Section -->
+  <main id="catalog-section" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+    
+    <!-- Filter & Sort Bar -->
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-neutral-200 mb-6">
+      <div class="flex items-center gap-2.5">
+        <h2 id="active-brand-heading" class="font-display text-2xl font-bold uppercase tracking-tight text-neutral-900">
+          All Footwear
+        </h2>
+        <span class="px-2.5 py-0.5 rounded-full bg-[#F5F5F7] border border-neutral-200 text-xs text-neutral-600 font-semibold">
+          <span id="results-count">0</span> pairs
+        </span>
+      </div>
+
+      <!-- Filter Controls -->
+      <div class="flex flex-wrap items-center gap-2">
+        <!-- Category Select -->
+        <select id="category-filter" class="py-2 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
+          <option value="All">All Categories</option>
+          <option value="Sneakers">Sneakers</option>
+          <option value="Running">Running</option>
+          <option value="High Tops">High Tops</option>
+          <option value="Low Tops">Low Tops</option>
+          <option value="Clogs & Mules">Clogs &amp; Mules</option>
+          <option value="Slides & Sandals">Slides &amp; Sandals</option>
+          <option value="Basketball">Basketball</option>
+        </select>
+
+        <!-- Size Select -->
+        <select id="size-filter" class="py-2 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
+          <option value="All">All Sizes (UK)</option>
+          <option value="UK 5">UK 5</option>
+          <option value="UK 6">UK 6</option>
+          <option value="UK 7">UK 7</option>
+          <option value="UK 8">UK 8</option>
+          <option value="UK 9">UK 9</option>
+          <option value="UK 10">UK 10</option>
+          <option value="UK 11">UK 11</option>
+          <option value="UK 12">UK 12</option>
+        </select>
+
+        <!-- Budget / Price Range Select -->
+        <select id="price-filter" class="py-2 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
+          <option value="All">All Price Ranges</option>
+          <option value="under-2000">Under ₹2,000</option>
+          <option value="2000-3500">₹2,000 – ₹3,500</option>
+          <option value="above-3500">Above ₹3,500</option>
+        </select>
+
+        <!-- Sort Select -->
+        <select id="sort-filter" class="py-2 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
+          <option value="newest">Newest Arrivals</option>
+          <option value="price-low">Price: Low to High</option>
+          <option value="price-high">Price: High to Low</option>
+        </select>
+
+        <button onclick="resetAllFilters()" class="py-2 px-3 rounded-lg text-xs font-semibold text-neutral-500 hover:text-[#D90429] transition-colors">
+          Reset
+        </button>
+      </div>
+    </div>
+
+    <!-- Active Filter Pills Strip (Visible when customer filters by brand/size/price/search) -->
+    <div id="active-filters-strip" class="hidden flex-wrap items-center gap-2 mb-6"></div>
+
+    <!-- Products Grid -->
+    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+      <!-- Populated dynamically by app.js -->
+    </div>
+
+    <!-- Pagination -->
+    <div id="pagination-container" class="mt-10"></div>
+
+  </main>
+
+  <!-- Customer Custom Pair Inquiry Section ("Looking for a Specific Pair? Ask on WhatsApp") -->
+  <section id="request-pair-section" class="bg-[#111111] text-white py-14 px-4 sm:px-6 border-t border-neutral-800">
+    <div class="max-w-5xl mx-auto bg-neutral-900/90 border border-neutral-800 rounded-2xl p-6 sm:p-10">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+        <div class="lg:col-span-6 space-y-3">
+          <span class="inline-block px-3 py-1 rounded bg-[#D90429] text-white text-[10px] font-bold uppercase tracking-widest">
+            10,000+ Pairs in Our Delhi Network
+          </span>
+          <h3 class="font-display text-2xl sm:text-3xl font-bold uppercase tracking-tight">
+            Looking for a Specific Shoe or Colorway?
+          </h3>
+          <p class="text-neutral-300 text-xs sm:text-sm leading-relaxed">
+            Have a specific sneaker model, colorway, or screenshot in mind that you don't see listed yet? Enter the brand, model name, and your UK size below—it will open a direct WhatsApp message to our Delhi store desk so we can share real stock photos and price immediately.
+          </p>
+        </div>
+
+        <form onsubmit="handleCustomShoeRequest(event)" class="lg:col-span-6 space-y-3.5 bg-black/50 p-5 rounded-xl border border-neutral-800">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                Brand Name *
+              </label>
+              <input 
+                type="text" 
+                id="req-shoe-brand" 
+                placeholder="e.g. Nike, On Cloud, Adidas..." 
+                required
+                class="w-full py-2.5 px-3 rounded-lg bg-neutral-900 border border-neutral-700 text-white text-xs focus:outline-none focus:border-[#D90429]"
+              />
+            </div>
+            <div>
+              <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+                Your UK Size *
+              </label>
+              <select 
+                id="req-shoe-size" 
+                required
+                class="w-full py-2.5 px-3 rounded-lg bg-neutral-900 border border-neutral-700 text-white text-xs focus:outline-none focus:border-[#D90429]">
+                <option value="" selected disabled>Select UK Size</option>
+                <option value="UK 5">UK 5 (EU 38)</option>
+                <option value="UK 6">UK 6 (EU 40)</option>
+                <option value="UK 7">UK 7 (EU 41)</option>
+                <option value="UK 8">UK 8 (EU 42)</option>
+                <option value="UK 9">UK 9 (EU 43)</option>
+                <option value="UK 10">UK 10 (EU 44)</option>
+                <option value="UK 11">UK 11 (EU 45)</option>
+                <option value="UK 12">UK 12 (EU 46)</option>
+              </select>
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
+              Shoe Model / Colorway Details *
+            </label>
+            <input 
+              type="text" 
+              id="req-shoe-model" 
+              placeholder="e.g. On Cloudmonster All Black / Jordan 1 Low Travis Olive" 
+              required
+              class="w-full py-2.5 px-3 rounded-lg bg-neutral-900 border border-neutral-700 text-white text-xs focus:outline-none focus:border-[#D90429]"
+            />
+          </div>
+
+          <button 
+            type="submit" 
+            class="w-full py-3 px-5 rounded-lg bg-[#25D366] hover:bg-[#1fb858] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+            <i class="fa-brands fa-whatsapp text-base"></i>
+            <span>Check Availability on WhatsApp</span>
+          </button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <!-- Customer FAQ & Store Assurance Section -->
+  <section class="bg-[#F5F5F7] border-t border-neutral-200 py-14">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6">
+      <div class="grid grid-cols-1 lg:grid-cols-12 gap-10">
+        
+        <!-- Left: Store Highlights -->
+        <div class="lg:col-span-5 space-y-5">
+          <div>
+            <span class="text-[#D90429] font-bold text-xs uppercase tracking-widest">Why Shop With FixMyKicks</span>
+            <h3 class="font-display text-2xl sm:text-3xl font-bold uppercase text-neutral-900 mt-1">
+              Direct From Our Delhi Store To Your Doorstep
+            </h3>
+          </div>
+
+          <div class="space-y-4">
+            <div class="flex items-start gap-3.5 bg-white p-4 rounded-xl border border-neutral-200">
+              <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-[#D90429] shrink-0">
+                <i class="fa-brands fa-whatsapp text-lg"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-xs uppercase tracking-wider text-neutral-900 mb-1">100% Direct WhatsApp Ordering</h4>
+                <p class="text-neutral-600 text-xs leading-relaxed">
+                  No complicated checkout forms or payment gateways on the website. Pick your size, click Order Now, and finalize directly with our team on WhatsApp.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3.5 bg-white p-4 rounded-xl border border-neutral-200">
+              <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-[#D90429] shrink-0">
+                <i class="fa-solid fa-camera text-base"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-xs uppercase tracking-wider text-neutral-900 mb-1">Multi-Angle Photos &amp; Live Dispatch Check</h4>
+                <p class="text-neutral-600 text-xs leading-relaxed">
+                  Slide through multiple angles of every pair on our website, and ask our team on WhatsApp for live pair photos or videos before dispatch.
+                </p>
+              </div>
+            </div>
+
+            <div class="flex items-start gap-3.5 bg-white p-4 rounded-xl border border-neutral-200">
+              <div class="w-10 h-10 rounded-lg bg-red-50 flex items-center justify-center text-[#D90429] shrink-0">
+                <i class="fa-solid fa-truck-fast text-base"></i>
+              </div>
+              <div>
+                <h4 class="font-bold text-xs uppercase tracking-wider text-neutral-900 mb-1">All India Courier Dispatch from Delhi</h4>
+                <p class="text-neutral-600 text-xs leading-relaxed" id="footer-store-address">
+                  Dispatched from our Delhi store across all states in India with courier tracking shared directly on your WhatsApp number.
+                </p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: Customer Frequently Asked Questions -->
+        <div class="lg:col-span-7 space-y-3">
+          <h3 class="font-display text-xl font-bold uppercase text-neutral-900 mb-3">
+            Frequently Asked Questions
+          </h3>
+
+          <details class="group bg-white rounded-xl border border-neutral-200 p-4 cursor-pointer" open>
+            <summary class="flex items-center justify-between font-bold text-xs sm:text-sm text-neutral-900 list-none">
+              <span>How do I place an order on FixMyKicks?</span>
+              <i class="fa-solid fa-chevron-down text-xs text-neutral-400 group-open:rotate-180 transition-transform"></i>
+            </summary>
+            <p class="text-neutral-600 text-xs leading-relaxed mt-2.5 pt-2.5 border-t border-neutral-100">
+              Simply select your UK size on any shoe card and click <strong>Order Now</strong>. It will open WhatsApp with your selected shoe name, product code, price, and size pre-filled. You can also add multiple shoes to your <strong>WhatsApp Bag</strong> and send all of them together in a single WhatsApp message.
+            </p>
+          </details>
+
+          <details class="group bg-white rounded-xl border border-neutral-200 p-4 cursor-pointer">
+            <summary class="flex items-center justify-between font-bold text-xs sm:text-sm text-neutral-900 list-none">
+              <span>How many days does delivery take across India?</span>
+              <i class="fa-solid fa-chevron-down text-xs text-neutral-400 group-open:rotate-180 transition-transform"></i>
+            </summary>
+            <p class="text-neutral-600 text-xs leading-relaxed mt-2.5 pt-2.5 border-t border-neutral-100">
+              For Delhi NCR, same-day or next-day delivery is available. For all other cities across India (Mumbai, Bangalore, Hyderabad, Pune, Kolkata, Ahmedabad, Chandigarh, etc.), courier delivery takes 3–5 working days with live tracking shared on WhatsApp.
+            </p>
+          </details>
+
+          <details class="group bg-white rounded-xl border border-neutral-200 p-4 cursor-pointer">
+            <summary class="flex items-center justify-between font-bold text-xs sm:text-sm text-neutral-900 list-none">
+              <span>Can I see real photos or a video of my shoe on WhatsApp before ordering?</span>
+              <i class="fa-solid fa-chevron-down text-xs text-neutral-400 group-open:rotate-180 transition-transform"></i>
+            </summary>
+            <p class="text-neutral-600 text-xs leading-relaxed mt-2.5 pt-2.5 border-t border-neutral-100">
+              Yes! Click on any shoe to open its details and click <strong>"Request Live Photo / Video on WhatsApp"</strong>, or message us directly on WhatsApp and our Delhi desk will share live visuals of your exact size.
+            </p>
+          </details>
+
+          <details class="group bg-white rounded-xl border border-neutral-200 p-4 cursor-pointer">
+            <summary class="flex items-center justify-between font-bold text-xs sm:text-sm text-neutral-900 list-none">
+              <span>What if I am unsure about my UK shoe size?</span>
+              <i class="fa-solid fa-chevron-down text-xs text-neutral-400 group-open:rotate-180 transition-transform"></i>
+            </summary>
+            <p class="text-neutral-600 text-xs leading-relaxed mt-2.5 pt-2.5 border-t border-neutral-100">
+              Click on <strong>UK Size Chart</strong> at the top of the page to compare UK, Euro (EU), and foot length in centimeters (CM). You can also message our team on WhatsApp and we will guide you on the exact fit for each brand (Nike, Adidas, On Cloud, Birkenstock, Crocs, New Balance, Puma, etc.).
+            </p>
+          </details>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-[#111111] text-neutral-400 py-12 text-xs">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 grid grid-cols-1 md:grid-cols-4 gap-8 pb-10 border-b border-neutral-800">
+      
+      <!-- Col 1 -->
+      <div class="space-y-4">
+        <div class="flex items-center gap-2.5">
+          <img src="assets/logo.jpg?v=3" onerror="this.onerror=null; this.src='assets/logo.svg';" alt="Fix My Kicks" class="w-10 h-10 rounded-lg object-cover border border-neutral-800" />
+          <span class="font-display font-bold text-xl text-white uppercase tracking-tight">
+            FIX <span class="text-[#D90429]">MY</span> KICKS
+          </span>
+        </div>
+        <p class="text-neutral-400 text-xs leading-relaxed">
+          FixMyKicks Delhi — Footwear store offering Nike, Adidas, On Cloud, Puma, Birkenstock, Crocs, New Balance and more with delivery across India.
+        </p>
+
+        <!-- Official Social Links -->
+        <div class="flex items-center gap-2.5 pt-1">
+          <a 
+            href="https://www.instagram.com/fixmykickss.in" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="px-3 py-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-800 flex items-center gap-1.5 transition-colors">
+            <i class="fa-brands fa-instagram text-[#E1306C] text-sm"></i>
+            <span>@fixmykickss.in</span>
+          </a>
+          <a 
+            href="https://t.me/yashaswani77" 
+            target="_blank" 
+            rel="noopener noreferrer" 
+            class="px-3 py-2 rounded-lg bg-neutral-900 hover:bg-neutral-800 text-white border border-neutral-800 flex items-center gap-1.5 transition-colors">
+            <i class="fa-brands fa-telegram text-[#0088cc] text-sm"></i>
+            <span>Telegram</span>
+          </a>
+        </div>
+      </div>
+
+      <!-- Col 2: Dynamic Brands List -->
+      <div>
+        <h4 class="text-white font-semibold uppercase tracking-wider text-xs mb-3">Brands</h4>
+        <ul id="footer-brands-list" class="space-y-2 text-xs">
+          <!-- Populated dynamically by app.js -->
+        </ul>
+      </div>
+
+      <!-- Col 3 -->
+      <div>
+        <h4 class="text-white font-semibold uppercase tracking-wider text-xs mb-3">Customer Links</h4>
+        <ul class="space-y-2 text-xs">
+          <li><button onclick="openSizeChartModal()" class="hover:text-white transition-colors">UK / Euro Size Guide</button></li>
+          <li><button onclick="openOrderBagDrawer()" class="hover:text-white transition-colors">My WhatsApp Order Bag</button></li>
+          <li><a href="#request-pair-section" class="hover:text-white transition-colors">Request a Specific Shoe</a></li>
+          <li><a href="https://www.instagram.com/fixmykickss.in" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors flex items-center gap-1.5">
+            <i class="fa-brands fa-instagram text-[#E1306C]"></i> Instagram (@fixmykickss.in)
+          </a></li>
+          <li><a href="https://t.me/yashaswani77" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors flex items-center gap-1.5">
+            <i class="fa-brands fa-telegram text-[#0088cc]"></i> Telegram (t.me/yashaswani77)
+          </a></li>
+          <li><button onclick="openAdminPortal()" class="text-neutral-500 hover:text-white transition-colors flex items-center gap-1.5 pt-1">
+            <i class="fa-solid fa-lock text-[10px]"></i> Admin Login
+          </button></li>
+        </ul>
+      </div>
+
+      <!-- Col 4 -->
+      <div>
+        <h4 class="text-white font-semibold uppercase tracking-wider text-xs mb-3">Direct WhatsApp &amp; Contact Desk</h4>
+        <div class="space-y-2 mb-4 text-xs">
+          <button onclick="openGeneralWhatsApp('917303039323')" class="w-full py-2 px-3 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-200 hover:text-white flex items-center justify-between transition-colors">
+            <span class="flex items-center gap-2 font-mono">
+              <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i>
+              +91-7303039323
+            </span>
+            <span class="text-[10px] text-emerald-400 font-semibold uppercase">Chat</span>
+          </button>
+
+          <button onclick="openGeneralWhatsApp('916378599513')" class="w-full py-2 px-3 rounded-lg bg-neutral-900 hover:bg-neutral-800 border border-neutral-800 text-neutral-200 hover:text-white flex items-center justify-between transition-colors">
+            <span class="flex items-center gap-2 font-mono">
+              <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i>
+              +91 6378599513
+            </span>
+            <span class="text-[10px] text-emerald-400 font-semibold uppercase">Chat</span>
+          </button>
+        </div>
+
+        <button 
+          onclick="openGeneralWhatsApp()" 
+          class="w-full py-2.5 px-4 rounded-lg bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-xs flex items-center justify-center gap-2 transition-colors">
+          <i class="fa-brands fa-whatsapp text-base"></i>
+          <span>Message Us on WhatsApp</span>
+        </button>
+      </div>
+
+    </div>
+
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 pt-6 flex flex-col sm:flex-row items-center justify-between gap-4 text-[11px] text-neutral-500">
+      <div>&copy; 2026 FixMyKicks Delhi. All rights reserved.</div>
+      <div class="flex items-center gap-4">
+        <a href="https://www.instagram.com/fixmykickss.in" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Instagram: @fixmykickss.in</a>
+        <span>•</span>
+        <a href="https://t.me/yashaswani77" target="_blank" rel="noopener noreferrer" class="hover:text-white transition-colors">Telegram: t.me/yashaswani77</a>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Floating Bottom-Right WhatsApp Quick Chat Button -->
+  <button 
+    onclick="openGeneralWhatsApp()" 
+    aria-label="Chat on WhatsApp"
+    class="fixed bottom-5 right-5 z-40 px-4 py-3 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-xs shadow-2xl flex items-center gap-2 transition-transform hover:scale-105">
+    <i class="fa-brands fa-whatsapp text-xl"></i>
+    <span class="hidden sm:inline">Order / Ask on WhatsApp</span>
+  </button>
+
+  <!-- ================= MODALS & DRAWERS ================= -->
+
+  <!-- 1. Multi-Pair WhatsApp Order Bag Drawer (No Payment Gateway — Sends Full List to WhatsApp) -->
+  <div id="order-bag-drawer" class="fixed inset-0 z-50 bg-black/70 hidden flex justify-end">
+    <div class="relative w-full max-w-md bg-white h-full flex flex-col shadow-2xl">
+      <div class="p-5 border-b border-neutral-200 flex items-center justify-between bg-[#111111] text-white">
+        <div class="flex items-center gap-2.5">
+          <i class="fa-brands fa-whatsapp text-emerald-400 text-lg"></i>
+          <div>
+            <h3 class="font-display text-lg font-bold uppercase tracking-wide">
+              My WhatsApp Order Bag
+            </h3>
+            <p class="text-[11px] text-neutral-400">
+              Shortlist multiple shoes &amp; send together on WhatsApp
+            </p>
+          </div>
+        </div>
+        <button onclick="closeOrderBagDrawer()" class="w-8 h-8 rounded-full bg-white/10 hover:bg-white/20 text-white flex items-center justify-center">
+          <i class="fa-solid fa-xmark"></i>
+        </button>
+      </div>
+
+      <!-- Bag Items List -->
+      <div id="order-bag-items" class="flex-1 overflow-y-auto p-4 space-y-3">
+        <!-- Populated dynamically by app.js -->
+      </div>
+
+      <!-- Bag Footer: Direct WhatsApp Send Button (Zero Payment Forms) -->
+      <div id="order-bag-footer" class="p-5 border-t border-neutral-200 bg-[#F5F5F7] space-y-3">
+        <div class="flex items-center justify-between text-xs">
+          <span class="text-neutral-600 font-semibold uppercase">Selected Pairs Total:</span>
+          <span id="order-bag-total" class="font-display text-xl font-bold text-neutral-900">₹0</span>
+        </div>
+        <p class="text-[11px] text-neutral-500 leading-relaxed">
+          Clicking below will send all selected shoes and UK sizes directly to our WhatsApp chat for instant order confirmation.
+        </p>
+        <button 
+          onclick="sendOrderBagToWhatsApp()" 
+          class="w-full py-3.5 px-5 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-colors">
+          <i class="fa-brands fa-whatsapp text-lg"></i>
+          <span>Send Selection to WhatsApp</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Product Detail & Multi-Photo Slider Modal -->
+  <div id="product-modal" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="relative w-full max-w-4xl bg-white rounded-2xl p-5 sm:p-8 shadow-2xl my-8 max-h-[92vh] overflow-y-auto">
+      <button 
+        onclick="closeProductModal()" 
+        class="absolute top-4 right-4 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center transition-colors z-20">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div id="modal-body"></div>
+    </div>
+  </div>
+
+  <!-- 3. Admin Upload / Edit Shoe Modal (SYSTEM MULTI-PHOTO UPLOAD + BRAND ADDITION) -->
+  <div id="add-product-modal" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
+    <div class="relative w-full max-w-2xl bg-white rounded-2xl p-6 sm:p-8 shadow-2xl my-8 max-h-[92vh] overflow-y-auto">
+      <button 
+        onclick="closeAddProductModal()" 
+        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 id="product-form-title" class="font-display text-2xl font-bold uppercase text-neutral-900 mb-1">
+        Upload New Shoe
+      </h3>
+      <p class="text-neutral-500 text-xs mb-6">
+        Upload multiple angle photos from your computer or phone. Customers can hover or click on the shoe card to slide through all photos.
+      </p>
+
+      <form id="product-upload-form" onsubmit="handleSaveProduct(event)" class="space-y-5">
+        <input type="hidden" id="edit-shoe-id" value="" />
+
+        <!-- System Multi-Photo Upload Dropzone -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700">
+              Shoe Slider Photos (Upload Multiple from Device) *
+            </label>
+            <button 
+              type="button" 
+              onclick="document.getElementById('shoe-photo-files').click()" 
+              class="text-xs font-bold text-[#D90429] hover:underline flex items-center gap-1">
+              <i class="fa-solid fa-plus"></i> Add More Photos
+            </button>
+          </div>
+          
+          <div 
+            id="photo-dropzone"
+            onclick="document.getElementById('shoe-photo-files').click()"
+            class="border-2 border-dashed border-neutral-300 hover:border-[#D90429] rounded-xl p-5 text-center cursor-pointer bg-[#F5F5F7]/60 transition-colors">
+            <input 
+              type="file" 
+              id="shoe-photo-files" 
+              accept="image/*" 
+              multiple 
+              class="hidden" 
+              onchange="handleSystemFilesSelected(event)"
+            />
+            <div class="w-11 h-11 rounded-full bg-white border border-neutral-200 mx-auto flex items-center justify-center text-[#D90429] mb-2.5 shadow-sm">
+              <i class="fa-solid fa-images text-lg"></i>
+            </div>
+            <p class="text-sm font-semibold text-neutral-900">
+              Click to select 1 or multiple photos from your device
+            </p>
+            <p class="text-xs text-neutral-500 mt-1">
+              You can select multiple photos together or click "Add More Photos" to add side, back, top &amp; sole angles.
+            </p>
+          </div>
+
+          <!-- Selected Photos Preview Strip with Reorder Controls -->
+          <div id="upload-previews-container" class="hidden mt-4 p-3.5 rounded-xl bg-[#F5F5F7] border border-neutral-200">
+            <div class="flex items-center justify-between mb-2.5">
+              <span class="text-xs font-bold text-neutral-800">
+                Slider Photos (<span id="upload-photo-count">0</span> angles uploaded) — First photo is the Cover
+              </span>
+              <div class="flex items-center gap-3">
+                <button type="button" onclick="document.getElementById('shoe-photo-files').click()" class="text-xs font-bold text-neutral-900 hover:text-[#D90429]">
+                  + Add Another Angle
+                </button>
+                <button type="button" onclick="clearSelectedUploadPhotos()" class="text-xs text-[#D90429] hover:underline font-medium">
+                  Clear All
+                </button>
+              </div>
+            </div>
+            <div id="upload-previews-grid" class="grid grid-cols-3 sm:grid-cols-5 gap-3"></div>
+          </div>
+        </div>
+
+        <!-- Shoe Name & Dynamic Brand Selector (with + Add New Brand inline) -->
+        <div class="grid grid-cols-1 sm:grid-cols-12 gap-4">
+          <div class="sm:col-span-7">
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+              Shoe Model Name *
+            </label>
+            <input 
+              type="text" 
+              id="new-shoe-name" 
+              placeholder="e.g. Air Jordan 1 Low Reverse Mocha" 
+              required 
+              class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
+            />
+          </div>
+
+          <div class="sm:col-span-5">
+            <div class="flex items-center justify-between mb-1.5">
+              <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700">
+                Brand *
+              </label>
+              <button 
+                type="button" 
+                onclick="toggleQuickAddBrandBox()" 
+                class="text-[11px] font-bold text-[#D90429] hover:underline flex items-center gap-1">
+                <i class="fa-solid fa-plus"></i> Add New Brand
+              </button>
+            </div>
+            <select id="new-shoe-brand" class="w-full py-2.5 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900">
+              <!-- Populated dynamically from BrandsAPI -->
+            </select>
+
+            <!-- Inline Quick Add Brand Input -->
+            <div id="quick-add-brand-box" class="hidden mt-2 flex items-center gap-1.5">
+              <input 
+                type="text" 
+                id="quick-new-brand-input" 
+                placeholder="Enter new brand name..." 
+                class="flex-1 py-1.5 px-2.5 rounded bg-white border border-neutral-400 text-xs text-neutral-900 focus:outline-none focus:border-[#D90429]"
+              />
+              <button 
+                type="button" 
+                onclick="handleQuickAddBrand()" 
+                class="px-3 py-1.5 rounded bg-[#111111] hover:bg-[#D90429] text-white text-xs font-bold shrink-0">
+                Add
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Category, Selling Price, MRP -->
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+              Category *
+            </label>
+            <select id="new-shoe-category" class="w-full py-2.5 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900">
+              <option value="Sneakers">Sneakers</option>
+              <option value="Running">Running</option>
+              <option value="High Tops">High Tops</option>
+              <option value="Low Tops">Low Tops</option>
+              <option value="Clogs & Mules">Clogs &amp; Mules</option>
+              <option value="Slides & Sandals">Slides &amp; Sandals</option>
+              <option value="Basketball">Basketball</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+              Price (₹) *
+            </label>
+            <input 
+              type="number" 
+              id="new-shoe-price" 
+              placeholder="e.g. 2699" 
+              required 
+              min="1"
+              class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
+            />
+          </div>
+
+          <div>
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+              MRP / Compare Price (₹)
+            </label>
+            <input 
+              type="number" 
+              id="new-shoe-mrp" 
+              placeholder="Optional (e.g. 8999)" 
+              min="1"
+              class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
+            />
+          </div>
+        </div>
+
+        <!-- Available Sizes Checkboxes -->
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700">
+              Available Sizes (UK) *
+            </label>
+            <button type="button" onclick="toggleAllAdminSizes()" class="text-xs font-semibold text-[#D90429] hover:underline">
+              Select / Deselect All
+            </button>
+          </div>
+          <div class="grid grid-cols-4 sm:grid-cols-8 gap-2" id="admin-sizes-checkboxes">
+            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
+              <input type="checkbox" name="shoe_size" value="UK 5" class="accent-[#D90429]" /> UK 5
+            </label>
+            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
+              <input type="checkbox" name="shoe_size" value="UK 6" checked class="accent-[#D90429]" /> UK 6
+            </label>
+            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
+              <input type="checkbox" name="shoe_size" value="UK 7" checked class="accent-[#D90429]" /> UK 7
+            </label>
+            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
+              <input type="checkbox" name="shoe_size" value="UK 8" checked class="accent-[#D90429]" /> UK 8
+            </label>
+            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
+              <input type="checkbox" name="shoe_size" value="UK 9" checked class="accent-[#D90429]" /> UK 9
+            </label>
+            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
+              <input type="checkbox" name="shoe_size" value="UK 10" checked class="accent-[#D90429]" /> UK 10
+            </label>
+            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
+              <input type="checkbox" name="shoe_size" value="UK 11" class="accent-[#D90429]" /> UK 11
+            </label>
+            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
+              <input type="checkbox" name="shoe_size" value="UK 12" class="accent-[#D90429]" /> UK 12
+            </label>
+          </div>
+        </div>
+
+        <!-- Optional Description / Notes -->
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+            Product Notes / Details (Optional)
+          </label>
+          <textarea 
+            id="new-shoe-desc" 
+            rows="2" 
+            placeholder="e.g. Comes with box, extra laces. Ready stock in Delhi."
+            class="w-full py-2 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
+          ></textarea>
+        </div>
+
+        <div class="pt-2 flex items-center justify-end gap-3">
+          <button 
+            type="button" 
+            onclick="closeAddProductModal()" 
+            class="px-5 py-2.5 rounded-lg border border-neutral-300 text-neutral-700 font-semibold text-xs hover:bg-neutral-100">
+            Cancel
+          </button>
+          <button 
+            type="submit" 
+            id="save-shoe-submit-btn"
+            class="px-6 py-2.5 rounded-lg bg-[#D90429] hover:bg-[#B50321] text-white font-bold text-xs uppercase tracking-wider transition-colors">
+            Save &amp; Publish Shoe
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 4. Admin Add / Manage Brands Modal -->
+  <div id="brands-modal" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md bg-white rounded-2xl p-6 sm:p-8 shadow-2xl">
+      <button 
+        onclick="closeBrandsModal()" 
+        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="font-display text-xl font-bold uppercase text-neutral-900 mb-1">
+        Add &amp; Manage Brands
+      </h3>
+      <p class="text-neutral-500 text-xs mb-5">
+        Add new footwear brands to your store navigation bar and upload selector.
+      </p>
+
+      <form onsubmit="handleAddBrandFromModal(event)" class="flex items-center gap-2 mb-5">
+        <input 
+          type="text" 
+          id="modal-new-brand-name" 
+          placeholder="e.g. Asics, Louis Vuitton, Vans, Converse..." 
+          required 
+          class="flex-1 py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
+        />
+        <button 
+          type="submit" 
+          class="px-4 py-2.5 rounded-lg bg-[#D90429] hover:bg-[#B50321] text-white font-bold text-xs uppercase tracking-wider shrink-0 transition-colors">
+          + Add Brand
+        </button>
+      </form>
+
+      <div>
+        <span class="block text-[11px] font-bold uppercase tracking-wider text-neutral-500 mb-2">
+          Active Store Brands
+        </span>
+        <div id="manage-brands-list" class="max-h-60 overflow-y-auto divide-y divide-neutral-200 border border-neutral-200 rounded-lg bg-[#F5F5F7]/50">
+          <!-- Populated dynamically by app.js -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Size Chart Modal -->
+  <div id="sizechart-modal" class="fixed inset-0 z-50 bg-black/70 hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-xl bg-white rounded-2xl p-6 sm:p-8 shadow-2xl">
+      <button 
+        onclick="closeSizeChartModal()" 
+        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="font-display text-xl font-bold uppercase text-neutral-900 mb-1">
+        UK / India Size Conversion Guide
+      </h3>
+      <p class="text-neutral-500 text-xs mb-5">
+        Measure your foot length in CM or check your regular UK size below. Need help choosing? Ask us on WhatsApp.
+      </p>
+
+      <div class="overflow-x-auto rounded-lg border border-neutral-200 mb-4">
+        <table class="w-full text-left text-xs text-neutral-700">
+          <thead class="bg-[#F5F5F7] text-neutral-900 uppercase font-bold border-b border-neutral-200">
+            <tr>
+              <th class="py-3 px-4">UK / India</th>
+              <th class="py-3 px-4">EU Size</th>
+              <th class="py-3 px-4">US Men</th>
+              <th class="py-3 px-4">Foot Length (CM)</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-neutral-200">
+            <tr><td class="py-2.5 px-4 font-bold">UK 5</td><td class="py-2.5 px-4">EU 38</td><td class="py-2.5 px-4">US 6</td><td class="py-2.5 px-4">23.5 cm</td></tr>
+            <tr><td class="py-2.5 px-4 font-bold">UK 6</td><td class="py-2.5 px-4">EU 40</td><td class="py-2.5 px-4">US 7</td><td class="py-2.5 px-4">24.5 cm</td></tr>
+            <tr><td class="py-2.5 px-4 font-bold">UK 7</td><td class="py-2.5 px-4">EU 41</td><td class="py-2.5 px-4">US 8</td><td class="py-2.5 px-4">25.5 cm</td></tr>
+            <tr><td class="py-2.5 px-4 font-bold">UK 8</td><td class="py-2.5 px-4">EU 42</td><td class="py-2.5 px-4">US 9</td><td class="py-2.5 px-4">26.5 cm</td></tr>
+            <tr><td class="py-2.5 px-4 font-bold">UK 9</td><td class="py-2.5 px-4">EU 43</td><td class="py-2.5 px-4">US 10</td><td class="py-2.5 px-4">27.5 cm</td></tr>
+            <tr><td class="py-2.5 px-4 font-bold">UK 10</td><td class="py-2.5 px-4">EU 44</td><td class="py-2.5 px-4">US 11</td><td class="py-2.5 px-4">28.5 cm</td></tr>
+            <tr><td class="py-2.5 px-4 font-bold">UK 11</td><td class="py-2.5 px-4">EU 45</td><td class="py-2.5 px-4">US 12</td><td class="py-2.5 px-4">29.5 cm</td></tr>
+            <tr><td class="py-2.5 px-4 font-bold">UK 12</td><td class="py-2.5 px-4">EU 46</td><td class="py-2.5 px-4">US 13</td><td class="py-2.5 px-4">30.5 cm</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <button 
+        onclick="closeSizeChartModal(); openGeneralWhatsApp();" 
+        class="w-full py-2.5 px-4 rounded-lg bg-[#111111] hover:bg-[#D90429] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 transition-colors">
+        <i class="fa-brands fa-whatsapp text-emerald-400 text-base"></i>
+        <span>Ask Our Team for Size Guidance on WhatsApp</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 6. Store Settings Modal (Admin Only) -->
+  <div id="settings-modal" class="fixed inset-0 z-50 bg-black/70 hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-md bg-white rounded-2xl p-6 sm:p-8 shadow-2xl">
+      <button 
+        onclick="closeSettingsModal()" 
+        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <h3 class="font-display text-xl font-bold uppercase text-neutral-900 mb-1">
+        Store Settings
+      </h3>
+      <p class="text-neutral-500 text-xs mb-5">
+        Configure your WhatsApp number where all customer orders and inquiries are sent directly.
+      </p>
+
+      <div class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+            WhatsApp Number (With Country Code 91)
+          </label>
+          <input 
+            type="text" 
+            id="setting-whatsapp-num" 
+            placeholder="917303039323" 
+            class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 font-mono text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
+          />
+          <span class="text-[11px] text-neutral-500 mt-1 block">Default: 917303039323 (+91-7303039323)</span>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+            Delhi Store Location Text
+          </label>
+          <input 
+            type="text" 
+            id="setting-store-address" 
+            placeholder="Karol Bagh, New Delhi - 110005" 
+            class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm focus:bg-white focus:outline-none focus:border-neutral-900"
+          />
+        </div>
+
+        <button 
+          onclick="saveStoreSettings()" 
+          class="w-full py-3 rounded-lg bg-[#111111] hover:bg-[#D90429] text-white font-bold text-xs uppercase tracking-wider transition-colors">
+          Save Settings
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 7. Admin Login Modal -->
+  <div id="admin-login-modal" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-4">
+    <div class="relative w-full max-w-sm bg-white rounded-2xl p-6 sm:p-7 shadow-2xl">
+      <button 
+        onclick="closeAdminLoginModal()" 
+        class="absolute top-4 right-4 w-8 h-8 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center">
+        <i class="fa-solid fa-xmark"></i>
+      </button>
+
+      <div class="mb-5">
+        <h3 class="font-display text-xl font-bold uppercase text-neutral-900">
+          Admin Login
+        </h3>
+        <p class="text-neutral-500 text-xs mt-1">
+          Enter your store PIN to upload shoes from your device, add brands, or edit inventory.
+        </p>
+      </div>
+
+      <form onsubmit="handleAdminLogin(event)" class="space-y-4">
+        <div>
+          <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700 mb-1.5">
+            Admin PIN
+          </label>
+          <input 
+            type="password" 
+            id="admin-pin-input" 
+            placeholder="Enter PIN (Default: 8080)" 
+            required 
+            class="w-full py-2.5 px-3.5 rounded-lg bg-[#F5F5F7] border border-neutral-300 text-neutral-900 text-sm font-mono focus:bg-white focus:outline-none focus:border-neutral-900"
+          />
+          <span class="text-[11px] text-neutral-400 mt-1 block">Default PIN: 8080</span>
+        </div>
+
+        <div id="admin-login-error" class="hidden p-2.5 rounded-lg bg-red-50 border border-red-200 text-[#D90429] text-xs font-semibold">
+          Incorrect Admin PIN.
+        </div>
+
+        <button 
+          type="submit" 
+          class="w-full py-2.5 rounded-lg bg-[#D90429] hover:bg-[#B50321] text-white font-bold text-xs uppercase tracking-wider transition-colors">
+          Login as Admin
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-sm"></div>
+
+  <!-- Scripts -->
+  <script src="js/products.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

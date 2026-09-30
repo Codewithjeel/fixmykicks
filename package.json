@@ -1,0 +1,12 @@
+{
+  "name": "fixmykicks-delhi",
+  "version": "1.0.0",
+  "description": "FixMyKicks Delhi — Footwear & Sneaker Storefront with Direct WhatsApp Ordering",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

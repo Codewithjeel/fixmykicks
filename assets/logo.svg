@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="100%" height="100%">
+  <!-- Matte Jet Black Gen-Z Streetwear Background -->
+  <rect width="500" height="500" rx="48" fill="#111111"/>
+  
+  <!-- Subtle Streetwear Frame Border -->
+  <rect x="14" y="14" width="472" height="472" rx="38" fill="none" stroke="#222222" stroke-width="2"/>
+
+  <!-- Iconic High-Top / Jordan 4 Inspired Streetwear Sneaker Silhouette (Red, White, Black) -->
+  <g transform="translate(85, 58) scale(1.05)">
+    <!-- Outer Sole (Red & White) -->
+    <path d="M18 168 C18 156, 36 152, 65 152 L285 152 C302 152, 312 158, 312 168 C312 177, 302 182, 282 182 L40 182 C24 182, 18 176, 18 168 Z" fill="#FFFFFF" stroke="#111111" stroke-width="5"/>
+    <!-- Crimson Red Midsole Accent & Air Unit -->
+    <path d="M175 150 L298 150 C306 150, 310 154, 310 162 L182 162 Z" fill="#D90429"/>
+    <rect x="228" y="164" width="48" height="9" rx="4.5" fill="#111111"/>
+    <path d="M52 166 C66 154, 98 154, 114 166 Z" fill="#D90429"/>
+
+    <!-- Main Sneaker Upper Body (Crisp White) -->
+    <path d="M24 150 C26 126, 54 114, 92 106 L178 44 C188 36, 204 42, 212 58 L224 78 C246 86, 268 82, 282 66 C292 56, 302 64, 305 84 L310 148 Z" fill="#FFFFFF" stroke="#111111" stroke-width="6" stroke-linejoin="round"/>
+
+    <!-- Crimson Red Streetwear Quarter Panel & Wing Cage -->
+    <path d="M142 104 L196 66 L242 104 C214 114, 174 114, 142 104 Z" fill="#D90429" stroke="#111111" stroke-width="5" stroke-linejoin="round"/>
+    <path d="M182 54 L256 112 L222 118 L170 68 Z" fill="none" stroke="#111111" stroke-width="7" stroke-linejoin="round"/>
+    <path d="M182 54 L256 112 L222 118 L170 68 Z" fill="#D90429"/>
+    <polygon points="196,76 232,104 208,108" fill="#111111"/>
+
+    <!-- Heel Tab & Collar Accent (Crimson Red) -->
+    <path d="M294 52 C304 54, 310 74, 308 110 L292 106 C294 82, 294 64, 294 52 Z" fill="#D90429" stroke="#111111" stroke-width="4"/>
+
+    <!-- Laces & Forefoot Mudguard Line -->
+    <path d="M26 136 C68 136, 102 118, 132 118 C162 118, 184 136, 232 136 L308 136" fill="none" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <line x1="112" y1="92" x2="126" y2="104" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <line x1="128" y1="80" x2="142" y2="92" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <line x1="144" y1="68" x2="158" y2="80" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+    <line x1="160" y1="56" x2="174" y2="68" stroke="#111111" stroke-width="6" stroke-linecap="round"/>
+  </g>
+
+  <!-- Bold Gen-Z Heavy Block Typography: ONLY "FIX MY KICKS" (Zero Tagline) -->
+  <text x="250" y="338" text-anchor="middle" fill="#FFFFFF" font-family="'Oswald', 'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="92" letter-spacing="4">
+    FIX <tspan fill="#D90429">MY</tspan>
+  </text>
+  <text x="250" y="436" text-anchor="middle" fill="#FFFFFF" font-family="'Oswald', 'Impact', 'Arial Black', sans-serif" font-weight="900" font-size="98" letter-spacing="6">
+    KICKS
+  </text>
+</svg>

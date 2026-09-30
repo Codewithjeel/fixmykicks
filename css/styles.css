@@ -1,0 +1,206 @@
+/* FixMyKicks Delhi — Clean Editorial Footwear Storefront Styles */
+
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Oswald:wght@500;600;700&display=swap');
+
+:root {
+  --brand-red: #D90429;
+  --brand-red-dark: #B50321;
+  --brand-black: #111111;
+  --brand-white: #FFFFFF;
+  --surface-gray: #F5F5F7;
+  --border-light: #E5E5EA;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  background-color: #FFFFFF;
+  color: #111111;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+.font-display {
+  font-family: 'Oswald', sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Custom Subtle Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: #F5F5F7;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #CCCCCC;
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #111111;
+}
+
+/* Hide scrollbar for horizontal brand navigation strip */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* Product Card Styling */
+.product-card {
+  background-color: #FFFFFF;
+  border: 1px solid #E5E7EB;
+  transition: transform 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+}
+
+.product-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 14px 28px -8px rgba(17, 17, 17, 0.09);
+  border-color: #D1D5DB;
+}
+
+/* Strict Uniform Image Viewport for Product Cards (Same Width & Height for Every Angle) */
+.shoe-photo-box {
+  position: relative;
+  width: 100%;
+  height: 260px;
+  background-color: #FFFFFF;
+  overflow: hidden;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .shoe-photo-box {
+    height: 245px;
+  }
+}
+
+/* Strict Uniform Image Viewport for Product Detail Modal */
+.modal-photo-box {
+  position: relative;
+  width: 100%;
+  height: 430px;
+  background-color: #FFFFFF;
+  overflow: hidden;
+  user-select: none;
+}
+
+@media (max-width: 640px) {
+  .modal-photo-box {
+    height: 320px;
+  }
+}
+
+/* Multi-Photo Horizontal Sliding Track — Pinned to 100% of Uniform Box */
+.card-slider-track {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  width: 100%;
+  height: 100%;
+  transition: transform 0.36s cubic-bezier(0.22, 1, 0.36, 1);
+  will-change: transform;
+}
+
+.card-slider-slide {
+  position: relative;
+  min-width: 100%;
+  max-width: 100%;
+  width: 100%;
+  height: 100%;
+  flex: 0 0 100%;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #FFFFFF;
+  padding: 0;
+}
+
+/* Full Actual Photo View with Exact Same Height & Width Across All Angles */
+.card-slider-slide img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  display: block;
+  transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.product-card:hover .card-slider-slide img {
+  transform: scale(1.02);
+}
+
+/* Uniform Thumbnail & Upload Preview Boxes */
+.uniform-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  background-color: #FFFFFF;
+  display: block;
+}
+
+/* Slider Arrow Visibility on Desktop Hover & Mobile */
+.card-slider-arrow {
+  opacity: 0;
+  transition: opacity 0.2s ease, background-color 0.2s ease, color 0.2s ease;
+}
+
+.product-card:hover .card-slider-arrow {
+  opacity: 1;
+}
+
+@media (max-width: 768px) {
+  .card-slider-arrow {
+    opacity: 0.92;
+  }
+}
+
+/* UK Size Chip Buttons */
+.size-chip {
+  border: 1px solid #E5E7EB;
+  background-color: #F5F5F7;
+  color: #374151;
+  font-weight: 600;
+  transition: all 0.15s ease;
+}
+
+.size-chip:hover {
+  border-color: #111111;
+  color: #111111;
+}
+
+.size-chip.active {
+  background-color: #111111;
+  color: #FFFFFF;
+  border-color: #111111;
+}
+
+/* Toast Animation */
+@keyframes toastSlideUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.toast-enter {
+  animation: toastSlideUp 0.22s ease forwards;
+}
