@@ -65,36 +65,33 @@ body {
   border-color: #D1D5DB;
 }
 
-/* Strict Uniform Image Viewport for Product Cards (Same Width & Height for Every Angle) */
+/* Strict Uniform Image Viewport for Product Cards (Square Aspect Ratio for Mobile & Desktop) */
 .shoe-photo-box {
   position: relative;
   width: 100%;
-  height: 260px;
+  aspect-ratio: 1 / 1;
   background-color: #FFFFFF;
   overflow: hidden;
   user-select: none;
   flex-shrink: 0;
-}
-
-@media (max-width: 640px) {
-  .shoe-photo-box {
-    height: 245px;
-  }
+  touch-action: pan-y;
 }
 
 /* Strict Uniform Image Viewport for Product Detail Modal */
 .modal-photo-box {
   position: relative;
   width: 100%;
-  height: 430px;
+  aspect-ratio: 1 / 1;
+  max-height: 460px;
   background-color: #FFFFFF;
   overflow: hidden;
   user-select: none;
+  touch-action: pan-y;
 }
 
 @media (max-width: 640px) {
   .modal-photo-box {
-    height: 320px;
+    max-height: 320px;
   }
 }
 
@@ -165,7 +162,10 @@ body {
 
 @media (max-width: 768px) {
   .card-slider-arrow {
-    opacity: 0.92;
+    opacity: 0.95;
+    width: 26px !important;
+    height: 26px !important;
+    font-size: 10px !important;
   }
 }
 
@@ -176,6 +176,7 @@ body {
   color: #374151;
   font-weight: 600;
   transition: all 0.15s ease;
+  touch-action: manipulation;
 }
 
 .size-chip:hover {
@@ -187,6 +188,17 @@ body {
   background-color: #111111;
   color: #FFFFFF;
   border-color: #111111;
+}
+
+/* Touch Scrolling */
+.touch-scroll {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/* Mobile Safe Inset for Floating Buttons & Drawers */
+.pb-safe {
+  padding-bottom: max(1rem, env(safe-area-inset-bottom, 16px));
 }
 
 /* Toast Animation */

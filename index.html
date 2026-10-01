@@ -31,35 +31,36 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/styles.css" />
+  <link rel="stylesheet" href="css/styles.css?v=8" />
 </head>
 <body class="bg-white text-neutral-900 min-h-screen flex flex-col">
 
   <!-- Top Utility Bar (100% WhatsApp-First, Zero Payment Mentions) -->
-  <div class="bg-[#111111] text-white text-xs py-2 px-4 border-b border-neutral-800">
-    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
-      <div class="flex items-center gap-2.5 overflow-hidden whitespace-nowrap text-[11px] sm:text-xs">
-        <span class="inline-block w-2 h-2 rounded-full bg-[#D90429] shrink-0"></span>
-        <span class="font-bold tracking-wide">DELHI STORE &amp; DISPATCH DESK:</span>
+  <div class="bg-[#111111] text-white text-xs py-2 px-3 sm:px-4 border-b border-neutral-800">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-2 sm:gap-4">
+      <div class="flex items-center gap-2 overflow-hidden whitespace-nowrap text-[11px] sm:text-xs">
+        <span class="inline-block w-2 h-2 rounded-full bg-[#D90429] shrink-0 animate-pulse"></span>
+        <span class="font-bold tracking-wide hidden sm:inline">DELHI STORE &amp; DISPATCH:</span>
+        <span class="font-bold tracking-wide sm:hidden">DELHI DESK:</span>
         <a href="https://wa.me/917303039323" target="_blank" class="text-neutral-300 hover:text-white font-mono flex items-center gap-1">
           <i class="fa-brands fa-whatsapp text-emerald-400"></i> +91 73030 39323
         </a>
         <span class="text-neutral-600 hidden sm:inline">•</span>
-        <a href="https://wa.me/916378599513" target="_blank" class="text-neutral-400 hover:text-white font-mono hidden sm:flex items-center gap-1">
+        <a href="https://wa.me/916378599513" target="_blank" class="text-neutral-400 hover:text-white font-mono hidden md:flex items-center gap-1">
           <i class="fa-brands fa-whatsapp text-emerald-400"></i> +91 63785 99513
         </a>
       </div>
 
-      <div class="flex items-center gap-4 text-xs font-medium shrink-0">
-        <a href="https://www.instagram.com/fixmykickss.in" target="_blank" rel="noopener noreferrer" class="text-neutral-300 hover:text-[#E1306C] transition-colors flex items-center gap-1.5" title="Follow us on Instagram">
+      <div class="flex items-center gap-3 sm:gap-4 text-xs font-medium shrink-0">
+        <a href="https://www.instagram.com/fixmykickss.in" target="_blank" rel="noopener noreferrer" class="text-neutral-300 hover:text-[#E1306C] transition-colors flex items-center gap-1" title="Follow us on Instagram">
           <i class="fa-brands fa-instagram text-sm text-[#E1306C]"></i>
           <span class="hidden md:inline">@fixmykickss.in</span>
         </a>
-        <a href="https://t.me/yashaswani77" target="_blank" rel="noopener noreferrer" class="text-neutral-300 hover:text-[#0088cc] transition-colors flex items-center gap-1.5" title="Join us on Telegram">
+        <a href="https://t.me/yashaswani77" target="_blank" rel="noopener noreferrer" class="text-neutral-300 hover:text-[#0088cc] transition-colors flex items-center gap-1" title="Join us on Telegram">
           <i class="fa-brands fa-telegram text-sm text-[#0088cc]"></i>
           <span class="hidden md:inline">Telegram</span>
         </a>
-        <button onclick="openSizeChartModal()" class="text-neutral-300 hover:text-white transition-colors flex items-center gap-1.5">
+        <button onclick="openSizeChartModal()" class="text-neutral-300 hover:text-white transition-colors flex items-center gap-1 text-[11px] sm:text-xs">
           <i class="fa-solid fa-ruler-horizontal text-[#D90429]"></i>
           <span>UK Size Guide</span>
         </button>
@@ -68,34 +69,36 @@
   </div>
 
   <!-- Admin Control Bar (Visible ONLY when Admin is logged in) -->
-  <div id="admin-top-bar" class="hidden bg-neutral-900 text-white text-xs py-2.5 px-4 border-b-2 border-[#D90429] sticky top-0 z-50">
-    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-3">
-      <div class="flex items-center gap-2.5">
-        <span class="bg-[#D90429] text-white text-[10px] font-bold uppercase px-2.5 py-0.5 rounded tracking-wider">
+  <div id="admin-top-bar" class="hidden bg-neutral-900 text-white text-xs py-2.5 px-3 sm:px-4 border-b-2 border-[#D90429] sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-2.5">
+      <div class="flex items-center gap-2">
+        <span class="bg-[#D90429] text-white text-[10px] font-bold uppercase px-2 py-0.5 rounded tracking-wider">
           Admin Mode
         </span>
         <span class="text-neutral-300 font-medium hidden sm:inline">
           FixMyKicks Store Manager — Upload Shoes, Multi-Photo Sliders &amp; Brands
         </span>
       </div>
-      <div class="flex items-center gap-2 flex-wrap">
-        <button onclick="openAddProductModal()" class="px-3.5 py-1.5 rounded bg-[#D90429] hover:bg-[#B50321] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors">
+      <div class="flex items-center gap-1.5 sm:gap-2 flex-wrap">
+        <button onclick="openAddProductModal()" class="px-2.5 sm:px-3.5 py-1.5 rounded bg-[#D90429] hover:bg-[#B50321] text-white font-semibold text-xs flex items-center gap-1.5 transition-colors">
           <i class="fa-solid fa-upload"></i>
-          <span>+ Upload New Shoe</span>
+          <span>+ Upload Shoe</span>
         </button>
-        <button onclick="openBrandsModal()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-100 font-semibold text-xs flex items-center gap-1.5 border border-neutral-700 transition-colors">
+        <button onclick="openBrandsModal()" class="px-2.5 sm:px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-100 font-semibold text-xs flex items-center gap-1.5 border border-neutral-700 transition-colors">
           <i class="fa-solid fa-tags text-[#D90429]"></i>
-          <span>+ Add / Manage Brands</span>
+          <span class="hidden sm:inline">+ Add / Manage Brands</span>
+          <span class="sm:hidden">Brands</span>
         </button>
-        <button onclick="openSettingsModal()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-medium text-xs flex items-center gap-1.5 border border-neutral-700 transition-colors">
+        <button onclick="openSettingsModal()" class="px-2.5 sm:px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-medium text-xs flex items-center gap-1.5 border border-neutral-700 transition-colors">
           <i class="fa-solid fa-gear"></i>
-          <span>Store Settings</span>
+          <span class="hidden sm:inline">Store Settings</span>
+          <span class="sm:hidden">Settings</span>
         </button>
-        <button onclick="exportLiveCatalog()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-medium text-xs flex items-center gap-1.5 border border-neutral-700 transition-colors" title="Export all active shoes as products.json for static hosting">
+        <button onclick="exportLiveCatalog()" class="hidden md:flex px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-200 font-medium text-xs items-center gap-1.5 border border-neutral-700 transition-colors" title="Export all active shoes as products.json for static hosting">
           <i class="fa-solid fa-file-arrow-down text-emerald-400"></i>
           <span>Export Catalog</span>
         </button>
-        <button onclick="logoutAdmin()" class="px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white text-xs border border-neutral-700 transition-colors">
+        <button onclick="logoutAdmin()" class="px-2.5 sm:px-3 py-1.5 rounded bg-neutral-800 hover:bg-neutral-700 text-neutral-400 hover:text-white text-xs border border-neutral-700 transition-colors">
           Logout
         </button>
       </div>
@@ -104,22 +107,22 @@
 
   <!-- Main Storefront Header -->
   <header class="bg-white border-b border-neutral-200 sticky top-0 z-40">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 h-20 flex items-center justify-between gap-4">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 sm:h-20 flex items-center justify-between gap-2 sm:gap-4">
       
       <!-- Brand Logo (Aesthetic Gen-Z Logo + Name Only, No Tagline) -->
-      <a href="#" onclick="resetAllFilters(); return false;" class="flex items-center gap-3 shrink-0 group">
+      <a href="#" onclick="resetAllFilters(); return false;" class="flex items-center gap-2 sm:gap-3 shrink-0 group">
         <img 
           src="assets/logo.jpg?v=3" 
           onerror="this.onerror=null; this.src='assets/logo.svg';"
           alt="Fix My Kicks" 
-          class="w-12 h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform"
+          class="w-10 h-10 sm:w-12 sm:h-12 rounded-xl object-cover shadow-sm group-hover:scale-105 transition-transform"
         />
-        <span class="font-display font-bold text-2xl sm:text-[26px] tracking-tight text-[#111111] uppercase leading-none">
+        <span class="font-display font-bold text-xl sm:text-2xl md:text-[26px] tracking-tight text-[#111111] uppercase leading-none">
           FIX <span class="text-[#D90429]">MY</span> KICKS
         </span>
       </a>
 
-      <!-- Search Input (Desktop) -->
+      <!-- Search Input (Desktop & Tablet) -->
       <div class="hidden md:flex flex-1 max-w-md mx-6">
         <div class="relative w-full">
           <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-sm"></i>
@@ -133,23 +136,23 @@
       </div>
 
       <!-- Right Customer Actions: Socials, Multi-Pair WhatsApp Bag + Direct Inquiry -->
-      <div class="flex items-center gap-2 sm:gap-2.5">
-        <!-- Instagram Link Button -->
+      <div class="flex items-center gap-1.5 sm:gap-2.5 shrink-0">
+        <!-- Instagram Link Button (Tablet & Desktop) -->
         <a 
           href="https://www.instagram.com/fixmykickss.in" 
           target="_blank" 
           rel="noopener noreferrer" 
-          class="w-10 h-10 rounded-lg bg-[#F5F5F7] hover:bg-red-50 text-neutral-700 hover:text-[#E1306C] flex items-center justify-center border border-neutral-200 transition-colors"
+          class="hidden sm:flex w-9 sm:w-10 h-9 sm:h-10 rounded-lg bg-[#F5F5F7] hover:bg-red-50 text-neutral-700 hover:text-[#E1306C] items-center justify-center border border-neutral-200 transition-colors"
           title="Follow @fixmykickss.in on Instagram">
           <i class="fa-brands fa-instagram text-base"></i>
         </a>
 
-        <!-- Telegram Link Button -->
+        <!-- Telegram Link Button (Tablet & Desktop) -->
         <a 
           href="https://t.me/yashaswani77" 
           target="_blank" 
           rel="noopener noreferrer" 
-          class="w-10 h-10 rounded-lg bg-[#F5F5F7] hover:bg-sky-50 text-neutral-700 hover:text-[#0088cc] flex items-center justify-center border border-neutral-200 transition-colors"
+          class="hidden sm:flex w-9 sm:w-10 h-9 sm:h-10 rounded-lg bg-[#F5F5F7] hover:bg-sky-50 text-neutral-700 hover:text-[#0088cc] items-center justify-center border border-neutral-200 transition-colors"
           title="Join t.me/yashaswani77 on Telegram">
           <i class="fa-brands fa-telegram text-base"></i>
         </a>
@@ -157,7 +160,7 @@
         <!-- Multi-Pair WhatsApp Order Bag Button -->
         <button 
           onclick="openOrderBagDrawer()" 
-          class="relative px-3.5 py-2.5 rounded-lg bg-[#F5F5F7] hover:bg-neutral-200 text-neutral-900 text-xs font-bold flex items-center gap-2 border border-neutral-200 transition-colors"
+          class="relative px-2.5 sm:px-3.5 py-2 sm:py-2.5 rounded-lg bg-[#F5F5F7] hover:bg-neutral-200 text-neutral-900 text-xs font-bold flex items-center gap-1.5 sm:gap-2 border border-neutral-200 transition-colors"
           title="Shortlist multiple shoes to order together on WhatsApp">
           <i class="fa-solid fa-bag-shopping text-[#D90429] text-sm"></i>
           <span class="hidden sm:inline">WhatsApp Bag</span>
@@ -168,17 +171,17 @@
 
         <button 
           onclick="openGeneralWhatsApp()" 
-          class="px-4 py-2.5 rounded-lg bg-[#111111] hover:bg-[#D90429] text-white text-xs font-semibold flex items-center gap-2 transition-colors">
-          <i class="fa-brands fa-whatsapp text-base text-emerald-400"></i>
+          class="px-3 sm:px-4 py-2 sm:py-2.5 rounded-lg bg-[#111111] hover:bg-[#D90429] text-white text-xs font-semibold flex items-center gap-1.5 sm:gap-2 transition-colors">
+          <i class="fa-brands fa-whatsapp text-sm sm:text-base text-emerald-400"></i>
           <span class="hidden sm:inline">Chat on WhatsApp</span>
-          <span class="sm:hidden">Chat</span>
+          <span class="sm:hidden font-bold">Chat</span>
         </button>
       </div>
 
     </div>
 
     <!-- Mobile Search Bar -->
-    <div class="md:hidden px-4 pb-3">
+    <div class="md:hidden px-3 sm:px-4 pb-2.5">
       <div class="relative w-full">
         <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-neutral-400 text-sm"></i>
         <input 
@@ -192,7 +195,7 @@
 
     <!-- Dynamic Brand Navigation Bar -->
     <div class="border-t border-neutral-100 bg-white">
-      <div id="header-brands-bar" class="max-w-7xl mx-auto px-4 sm:px-6 flex items-center gap-1.5 overflow-x-auto no-scrollbar py-2.5">
+      <div id="header-brands-bar" class="max-w-7xl mx-auto px-3 sm:px-6 flex items-center gap-1.5 overflow-x-auto no-scrollbar touch-scroll py-2">
         <!-- Populated dynamically by app.js from BrandsAPI -->
       </div>
     </div>
@@ -207,30 +210,30 @@
         alt="Fix My Kicks Top-Down Sneaker & Clog Collection" 
         class="w-full h-full object-cover object-right"
       />
-      <div class="absolute inset-0 bg-gradient-to-r from-[#111111]/90 via-[#111111]/45 to-transparent"></div>
+      <div class="absolute inset-0 bg-gradient-to-r from-[#111111] via-[#111111]/85 to-[#111111]/30 sm:via-[#111111]/50 sm:to-transparent"></div>
     </div>
 
-    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-11 sm:py-16">
+    <div class="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 py-8 sm:py-14 lg:py-16">
       <div class="max-w-2xl">
-        <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 border border-white/15 text-xs font-semibold mb-4">
-          <span class="w-2 h-2 rounded-full bg-[#D90429]"></span>
-          <span>DELHI STORE • PAN-INDIA DELIVERY • DIRECT WHATSAPP ORDERING</span>
+        <div class="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-white/10 border border-white/15 text-[10px] sm:text-xs font-semibold mb-3">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#D90429]"></span>
+          <span>DELHI STORE • ALL INDIA DELIVERY • DIRECT WHATSAPP ORDERING</span>
         </div>
-        <h1 class="font-display text-3xl sm:text-5xl font-bold tracking-tight uppercase leading-tight mb-4">
+        <h1 class="font-display text-2xl sm:text-4xl md:text-5xl font-bold tracking-tight uppercase leading-tight mb-3">
           EVERYDAY SNEAKERS, RUNNERS &amp; CLOGS
         </h1>
-        <p class="text-neutral-300 text-sm sm:text-base leading-relaxed mb-6">
-          Explore our footwear collection across Nike, Adidas, On Cloud, New Balance, Birkenstock, Crocs, Puma and more. Hover or click on any shoe to inspect multiple angles, pick your UK size, and send your order directly to our WhatsApp desk.
+        <p class="text-neutral-300 text-xs sm:text-sm md:text-base leading-relaxed mb-5 max-w-xl">
+          Explore our footwear collection across Nike, Adidas, On Cloud, New Balance, Birkenstock, Crocs, Puma and more. Inspect multiple angles, pick your UK size, and send your order directly to our WhatsApp desk.
         </p>
-        <div class="flex flex-wrap items-center gap-3">
-          <a href="#catalog-section" class="px-6 py-3 rounded-lg bg-[#D90429] hover:bg-[#B50321] text-white font-semibold text-xs uppercase tracking-wider transition-colors">
+        <div class="flex flex-wrap items-center gap-2 sm:gap-3">
+          <a href="#catalog-section" class="flex-1 sm:flex-initial px-5 py-2.5 sm:py-3 rounded-lg bg-[#D90429] hover:bg-[#B50321] text-white font-semibold text-xs uppercase tracking-wider text-center transition-colors">
             Browse Footwear
           </a>
-          <a href="#request-pair-section" class="px-5 py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center gap-2">
+          <a href="#request-pair-section" class="flex-1 sm:flex-initial px-4 py-2.5 sm:py-3 rounded-lg bg-white/10 hover:bg-white/20 text-white font-semibold text-xs uppercase tracking-wider transition-colors flex items-center justify-center gap-1.5">
             <i class="fa-brands fa-whatsapp text-emerald-400 text-sm"></i>
-            <span>Request Any Specific Pair</span>
+            <span>Request Pair</span>
           </a>
-          <button onclick="openSizeChartModal()" class="px-4 py-3 rounded-lg bg-transparent hover:bg-white/10 border border-white/20 text-neutral-200 font-semibold text-xs uppercase tracking-wider transition-colors">
+          <button onclick="openSizeChartModal()" class="w-full sm:w-auto px-4 py-2 sm:py-3 rounded-lg bg-transparent hover:bg-white/10 border border-white/20 text-neutral-200 font-semibold text-xs uppercase tracking-wider transition-colors">
             UK Size Guide
           </button>
         </div>
@@ -239,57 +242,59 @@
   </section>
 
   <!-- Quick 3-Step "How Ordering Works" Bar (100% WhatsApp, No Payment Gateway) -->
-  <section class="bg-[#F5F5F7] border-b border-neutral-200 py-4 px-4">
-    <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 text-xs">
-      <div class="flex items-center gap-3">
-        <span class="w-6 h-6 rounded-full bg-[#111111] text-white font-bold text-[11px] flex items-center justify-center shrink-0">1</span>
-        <span class="text-neutral-700"><strong class="text-neutral-900">Slide Photos &amp; Pick UK Size:</strong> Hover or click on any shoe to view all uploaded angles and select your UK size.</span>
+  <section class="bg-[#F5F5F7] border-b border-neutral-200 py-3 sm:py-4 px-3 sm:px-4">
+    <div class="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-6 text-xs">
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <span class="w-5 sm:w-6 h-5 sm:h-6 rounded-full bg-[#111111] text-white font-bold text-[10px] sm:text-[11px] flex items-center justify-center shrink-0">1</span>
+        <span class="text-neutral-700 text-[11px] sm:text-xs"><strong class="text-neutral-900">Slide Photos &amp; Pick UK Size:</strong> Slide through all angles and select your UK size.</span>
       </div>
-      <div class="flex items-center gap-3">
-        <span class="w-6 h-6 rounded-full bg-[#D90429] text-white font-bold text-[11px] flex items-center justify-center shrink-0">2</span>
-        <span class="text-neutral-700"><strong class="text-neutral-900">Click "Order Now":</strong> No online checkout forms—your selected shoe &amp; size go straight to our WhatsApp.</span>
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <span class="w-5 sm:w-6 h-5 sm:h-6 rounded-full bg-[#D90429] text-white font-bold text-[10px] sm:text-[11px] flex items-center justify-center shrink-0">2</span>
+        <span class="text-neutral-700 text-[11px] sm:text-xs"><strong class="text-neutral-900">Click "Order Now":</strong> No payment forms—your shoe &amp; size go straight to WhatsApp.</span>
       </div>
-      <div class="flex items-center gap-3">
-        <span class="w-6 h-6 rounded-full bg-[#111111] text-white font-bold text-[11px] flex items-center justify-center shrink-0">3</span>
-        <span class="text-neutral-700"><strong class="text-neutral-900">Instant Confirmation &amp; Dispatch:</strong> Confirm your delivery address on WhatsApp for fast dispatch from Delhi.</span>
+      <div class="flex items-center gap-2.5 sm:gap-3">
+        <span class="w-5 sm:w-6 h-5 sm:h-6 rounded-full bg-[#111111] text-white font-bold text-[10px] sm:text-[11px] flex items-center justify-center shrink-0">3</span>
+        <span class="text-neutral-700 text-[11px] sm:text-xs"><strong class="text-neutral-900">Instant Dispatch:</strong> Confirm your address on WhatsApp for fast dispatch from Delhi.</span>
       </div>
     </div>
   </section>
 
   <!-- Main Catalog Section -->
-  <main id="catalog-section" class="flex-grow max-w-7xl mx-auto px-4 sm:px-6 py-8 w-full">
+  <main id="catalog-section" class="flex-grow max-w-7xl mx-auto px-3 sm:px-6 py-6 sm:py-8 w-full">
     
     <!-- Filter & Sort Bar -->
-    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4 pb-5 border-b border-neutral-200 mb-6">
-      <div class="flex flex-wrap items-center gap-3">
-        <h2 id="active-brand-heading" class="font-display text-2xl font-bold uppercase tracking-tight text-neutral-900">
-          All Footwear
-        </h2>
-        <span class="px-2.5 py-0.5 rounded-full bg-[#F5F5F7] border border-neutral-200 text-xs text-neutral-600 font-semibold">
-          <span id="results-count">0</span> pairs
-        </span>
+    <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-3 sm:gap-4 pb-4 sm:pb-5 border-b border-neutral-200 mb-5 sm:mb-6">
+      <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+        <div class="flex items-center gap-2">
+          <h2 id="active-brand-heading" class="font-display text-xl sm:text-2xl font-bold uppercase tracking-tight text-neutral-900">
+            All Footwear
+          </h2>
+          <span class="px-2.5 py-0.5 rounded-full bg-[#F5F5F7] border border-neutral-200 text-xs text-neutral-600 font-semibold">
+            <span id="results-count">0</span> pairs
+          </span>
+        </div>
 
-        <!-- Men / Women / Unisex Filter Pills -->
-        <div class="inline-flex rounded-xl bg-[#F5F5F7] p-1 border border-neutral-200 ml-0 sm:ml-2">
-          <button onclick="filterByGender('All')" id="gender-pill-All" class="gender-nav-pill px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#111111] text-white">
+        <!-- Men / Women / Unisex Filter Pills (Full 4-tab bar on mobile, inline on desktop) -->
+        <div class="grid grid-cols-4 sm:flex rounded-xl bg-[#F5F5F7] p-1 border border-neutral-200 w-full sm:w-auto">
+          <button onclick="filterByGender('All')" id="gender-pill-All" class="gender-nav-pill px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#111111] text-white text-center">
             All
           </button>
-          <button onclick="filterByGender('Men')" id="gender-pill-Men" class="gender-nav-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-all">
-            <i class="fa-solid fa-person text-[#D90429] mr-1"></i> Men
+          <button onclick="filterByGender('Men')" id="gender-pill-Men" class="gender-nav-pill px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-all text-center">
+            <i class="fa-solid fa-person text-[#D90429] mr-0.5 sm:mr-1"></i> Men
           </button>
-          <button onclick="filterByGender('Women')" id="gender-pill-Women" class="gender-nav-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-all">
-            <i class="fa-solid fa-person-dress text-[#D90429] mr-1"></i> Women
+          <button onclick="filterByGender('Women')" id="gender-pill-Women" class="gender-nav-pill px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-all text-center">
+            <i class="fa-solid fa-person-dress text-[#D90429] mr-0.5 sm:mr-1"></i> Women
           </button>
-          <button onclick="filterByGender('Unisex')" id="gender-pill-Unisex" class="gender-nav-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-all">
+          <button onclick="filterByGender('Unisex')" id="gender-pill-Unisex" class="gender-nav-pill px-2.5 sm:px-3.5 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-all text-center">
             Unisex
           </button>
         </div>
       </div>
 
-      <!-- Filter Controls -->
-      <div class="flex flex-wrap items-center gap-2">
+      <!-- Filter Controls: 2x2 Grid on Mobile, Flex on Tablet/Desktop -->
+      <div class="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 w-full lg:w-auto">
         <!-- Category Select -->
-        <select id="category-filter" class="py-2 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
+        <select id="category-filter" class="w-full sm:w-auto py-2 px-2.5 sm:px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
           <option value="All">All Categories</option>
           <option value="Sneakers">Sneakers</option>
           <option value="Running">Running</option>
@@ -301,7 +306,7 @@
         </select>
 
         <!-- Size Select -->
-        <select id="size-filter" class="py-2 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
+        <select id="size-filter" class="w-full sm:w-auto py-2 px-2.5 sm:px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
           <option value="All">All Sizes (UK)</option>
           <option value="UK 5">UK 5</option>
           <option value="UK 6">UK 6</option>
@@ -314,7 +319,7 @@
         </select>
 
         <!-- Budget / Price Range Select -->
-        <select id="price-filter" class="py-2 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
+        <select id="price-filter" class="w-full sm:w-auto py-2 px-2.5 sm:px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
           <option value="All">All Price Ranges</option>
           <option value="under-2000">Under ₹2,000</option>
           <option value="2000-3500">₹2,000 – ₹3,500</option>
@@ -322,14 +327,14 @@
         </select>
 
         <!-- Sort Select -->
-        <select id="sort-filter" class="py-2 px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
+        <select id="sort-filter" class="w-full sm:w-auto py-2 px-2.5 sm:px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
           <option value="newest">Newest Arrivals</option>
           <option value="price-low">Price: Low to High</option>
           <option value="price-high">Price: High to Low</option>
         </select>
 
-        <button onclick="resetAllFilters()" class="py-2 px-3 rounded-lg text-xs font-semibold text-neutral-500 hover:text-[#D90429] transition-colors">
-          Reset
+        <button onclick="resetAllFilters()" class="col-span-2 sm:col-span-1 py-1.5 sm:py-2 px-3 rounded-lg text-xs font-semibold text-neutral-500 hover:text-[#D90429] transition-colors text-center">
+          Reset Filters
         </button>
       </div>
     </div>
@@ -337,15 +342,16 @@
     <!-- Active Filter Pills Strip (Visible when customer filters by brand/size/price/search) -->
     <div id="active-filters-strip" class="hidden flex-wrap items-center gap-2 mb-6"></div>
 
-    <!-- Products Grid -->
-    <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+    <!-- Products Grid (2 columns on mobile, 2 on sm tablet, 3 on md tablet, 4 on desktop) -->
+    <div id="products-grid" class="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2.5 sm:gap-4 lg:gap-6">
       <!-- Populated dynamically by app.js -->
     </div>
 
     <!-- Pagination -->
-    <div id="pagination-container" class="mt-10"></div>
+    <div id="pagination-container" class="mt-8 sm:mt-10"></div>
 
   </main>
+
 
   <!-- Customer Custom Pair Inquiry Section ("Looking for a Specific Pair? Ask on WhatsApp") -->
   <section id="request-pair-section" class="bg-[#111111] text-white py-14 px-4 sm:px-6 border-t border-neutral-800">
@@ -635,24 +641,25 @@
   <button 
     onclick="openGeneralWhatsApp()" 
     aria-label="Chat on WhatsApp"
-    class="fixed bottom-5 right-5 z-40 px-4 py-3 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-xs shadow-2xl flex items-center gap-2 transition-transform hover:scale-105">
-    <i class="fa-brands fa-whatsapp text-xl"></i>
+    class="fixed bottom-4 sm:bottom-5 right-4 sm:right-5 z-40 px-3.5 sm:px-4 py-2.5 sm:py-3 rounded-full bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-xs shadow-2xl flex items-center gap-1.5 sm:gap-2 transition-transform hover:scale-105">
+    <i class="fa-brands fa-whatsapp text-lg sm:text-xl"></i>
     <span class="hidden sm:inline">Order / Ask on WhatsApp</span>
+    <span class="sm:hidden font-bold">WhatsApp</span>
   </button>
 
   <!-- ================= MODALS & DRAWERS ================= -->
 
   <!-- 1. Multi-Pair WhatsApp Order Bag Drawer (No Payment Gateway — Sends Full List to WhatsApp) -->
   <div id="order-bag-drawer" class="fixed inset-0 z-50 bg-black/70 hidden flex justify-end">
-    <div class="relative w-full max-w-md bg-white h-full flex flex-col shadow-2xl">
-      <div class="p-5 border-b border-neutral-200 flex items-center justify-between bg-[#111111] text-white">
+    <div class="relative w-full max-w-full sm:max-w-md bg-white h-full flex flex-col shadow-2xl">
+      <div class="p-4 sm:p-5 border-b border-neutral-200 flex items-center justify-between bg-[#111111] text-white">
         <div class="flex items-center gap-2.5">
           <i class="fa-brands fa-whatsapp text-emerald-400 text-lg"></i>
           <div>
-            <h3 class="font-display text-lg font-bold uppercase tracking-wide">
+            <h3 class="font-display text-base sm:text-lg font-bold uppercase tracking-wide">
               My WhatsApp Order Bag
             </h3>
-            <p class="text-[11px] text-neutral-400">
+            <p class="text-[10px] sm:text-[11px] text-neutral-400">
               Shortlist multiple shoes &amp; send together on WhatsApp
             </p>
           </div>
@@ -663,23 +670,23 @@
       </div>
 
       <!-- Bag Items List -->
-      <div id="order-bag-items" class="flex-1 overflow-y-auto p-4 space-y-3">
+      <div id="order-bag-items" class="flex-1 overflow-y-auto p-3.5 sm:p-4 space-y-3">
         <!-- Populated dynamically by app.js -->
       </div>
 
       <!-- Bag Footer: Direct WhatsApp Send Button (Zero Payment Forms) -->
-      <div id="order-bag-footer" class="p-5 border-t border-neutral-200 bg-[#F5F5F7] space-y-3">
+      <div id="order-bag-footer" class="p-4 sm:p-5 border-t border-neutral-200 bg-[#F5F5F7] space-y-2.5 sm:space-y-3 pb-safe">
         <div class="flex items-center justify-between text-xs">
           <span class="text-neutral-600 font-semibold uppercase">Selected Pairs Total:</span>
-          <span id="order-bag-total" class="font-display text-xl font-bold text-neutral-900">₹0</span>
+          <span id="order-bag-total" class="font-display text-lg sm:text-xl font-bold text-neutral-900">₹0</span>
         </div>
-        <p class="text-[11px] text-neutral-500 leading-relaxed">
+        <p class="text-[10px] sm:text-[11px] text-neutral-500 leading-relaxed">
           Clicking below will send all selected shoes and UK sizes directly to our WhatsApp chat for instant order confirmation.
         </p>
         <button 
           onclick="sendOrderBagToWhatsApp()" 
-          class="w-full py-3.5 px-5 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-colors">
-          <i class="fa-brands fa-whatsapp text-lg"></i>
+          class="w-full py-3 sm:py-3.5 px-4 sm:px-5 rounded-xl bg-[#25D366] hover:bg-[#1ebe5d] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-md transition-colors">
+          <i class="fa-brands fa-whatsapp text-base sm:text-lg"></i>
           <span>Send Selection to WhatsApp</span>
         </button>
       </div>
@@ -687,12 +694,12 @@
   </div>
 
   <!-- 2. Product Detail & Multi-Photo Slider Modal -->
-  <div id="product-modal" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-    <div class="relative w-full max-w-4xl bg-white rounded-2xl p-5 sm:p-8 shadow-2xl my-8 max-h-[92vh] overflow-y-auto">
+  <div id="product-modal" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-2.5 sm:p-6 overflow-y-auto">
+    <div class="relative w-full max-w-4xl bg-white rounded-2xl p-4 sm:p-8 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
       <button 
         onclick="closeProductModal()" 
-        class="absolute top-4 right-4 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center transition-colors z-20">
-        <i class="fa-solid fa-xmark"></i>
+        class="absolute top-3 right-3 sm:top-4 sm:right-4 w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center transition-colors z-20 shadow-sm">
+        <i class="fa-solid fa-xmark text-sm"></i>
       </button>
 
       <div id="modal-body"></div>
@@ -700,12 +707,12 @@
   </div>
 
   <!-- 3. Admin Upload / Edit Shoe Modal (SYSTEM MULTI-PHOTO UPLOAD + BRAND ADDITION) -->
-  <div id="add-product-modal" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-3 sm:p-6 overflow-y-auto">
-    <div class="relative w-full max-w-2xl bg-white rounded-2xl p-6 sm:p-8 shadow-2xl my-8 max-h-[92vh] overflow-y-auto">
+  <div id="add-product-modal" class="fixed inset-0 z-50 bg-black/75 hidden flex items-center justify-center p-2.5 sm:p-6 overflow-y-auto">
+    <div class="relative w-full max-w-2xl bg-white rounded-2xl p-4 sm:p-8 shadow-2xl my-auto max-h-[94vh] overflow-y-auto">
       <button 
         onclick="closeAddProductModal()" 
-        class="absolute top-5 right-5 w-9 h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center">
-        <i class="fa-solid fa-xmark"></i>
+        class="absolute top-4 right-4 sm:top-5 sm:right-5 w-8 sm:w-9 h-8 sm:h-9 rounded-full bg-neutral-100 hover:bg-neutral-200 text-neutral-800 flex items-center justify-center">
+        <i class="fa-solid fa-xmark text-sm"></i>
       </button>
 
       <h3 id="product-form-title" class="font-display text-2xl font-bold uppercase text-neutral-900 mb-1">
@@ -1149,7 +1156,7 @@
   <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-sm"></div>
 
   <!-- Scripts -->
-  <script src="js/products.js?v=7"></script>
-  <script src="js/app.js?v=7"></script>
+  <script src="js/products.js?v=8"></script>
+  <script src="js/app.js?v=8"></script>
 </body>
 </html>

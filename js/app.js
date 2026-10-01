@@ -637,47 +637,47 @@ function renderProductGrid() {
       <article class="product-card rounded-xl overflow-hidden flex flex-col group" data-shoe-id="${shoe.id}">
         
         <!-- Dedicated Card Top Bar (Separates Brand Heading, Photo Counter & Admin Actions from the Photo) -->
-        <div class="px-3.5 py-2.5 bg-white border-b border-neutral-100 flex items-center justify-between gap-2">
-          <div class="flex items-center gap-1.5 min-w-0">
-            <span class="px-2.5 py-1 rounded bg-[#F5F5F7] border border-neutral-200 text-neutral-900 font-bold text-[10px] uppercase tracking-wider truncate">
+        <div class="px-2.5 sm:px-3.5 py-2 sm:py-2.5 bg-white border-b border-neutral-100 flex items-center justify-between gap-1 sm:gap-2">
+          <div class="flex items-center gap-1 sm:gap-1.5 min-w-0">
+            <span class="px-1.5 sm:px-2.5 py-0.5 sm:py-1 rounded bg-[#F5F5F7] border border-neutral-200 text-neutral-900 font-bold text-[9px] sm:text-[10px] uppercase tracking-wider truncate">
               ${escapeHtmlAttr(shoe.brand)}
             </span>
             ${shoe.gender && shoe.gender !== 'Unisex' ? `
-              <span class="px-1.5 py-0.5 rounded ${shoe.gender === 'Women' ? 'bg-pink-50 text-pink-700 border-pink-200' : 'bg-blue-50 text-blue-700 border-blue-200'} border font-bold text-[9px] uppercase tracking-wider shrink-0">
+              <span class="px-1 sm:px-1.5 py-0.5 rounded ${shoe.gender === 'Women' ? 'bg-pink-50 text-pink-700 border-pink-200' : 'bg-blue-50 text-blue-700 border-blue-200'} border font-bold text-[8px] sm:text-[9px] uppercase tracking-wider shrink-0">
                 ${escapeHtmlAttr(shoe.gender)}
               </span>
             ` : ''}
             ${totalImgs > 1 ? `
-              <span id="photo-badge-${shoe.id}" class="px-2 py-1 rounded bg-[#111111] text-white font-semibold text-[10px] tracking-wide flex items-center gap-1 shrink-0">
-                <i class="fa-regular fa-images text-[9px]"></i>
+              <span id="photo-badge-${shoe.id}" class="px-1.5 sm:px-2 py-0.5 sm:py-1 rounded bg-[#111111] text-white font-semibold text-[9px] sm:text-[10px] tracking-wide flex items-center gap-1 shrink-0">
+                <i class="fa-regular fa-images text-[8px] sm:text-[9px]"></i>
                 <span id="photo-counter-${shoe.id}">1/${totalImgs}</span>
               </span>
             ` : ''}
           </div>
 
           ${state.isAdmin ? `
-            <div class="flex items-center gap-1.5 shrink-0">
+            <div class="flex items-center gap-1 shrink-0">
               <button 
                 type="button" 
                 onclick="openEditProductModal(event, '${shoe.id}')" 
                 title="Edit Shoe & Photos"
-                class="w-7 h-7 rounded-full bg-[#F5F5F7] hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-200 flex items-center justify-center text-[11px] transition-colors">
+                class="w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#F5F5F7] hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-200 flex items-center justify-center text-[10px] sm:text-[11px] transition-colors">
                 <i class="fa-solid fa-pen"></i>
               </button>
               <button 
                 type="button" 
                 onclick="handleDeleteProduct(event, '${shoe.id}')" 
                 title="Delete Shoe"
-                class="w-7 h-7 rounded-full bg-[#F5F5F7] hover:bg-[#D90429] text-[#D90429] hover:text-white border border-neutral-200 flex items-center justify-center text-[11px] transition-colors">
+                class="w-6 sm:w-7 h-6 sm:h-7 rounded-full bg-[#F5F5F7] hover:bg-[#D90429] text-[#D90429] hover:text-white border border-neutral-200 flex items-center justify-center text-[10px] sm:text-[11px] transition-colors">
                 <i class="fa-solid fa-trash-can"></i>
               </button>
             </div>
           ` : `
-            <span class="text-[10px] font-medium text-neutral-400 truncate">${escapeHtmlAttr(shoe.gender && shoe.gender !== 'Unisex' ? `${shoe.gender} • ` : '')}${escapeHtmlAttr(shoe.category || 'Footwear')}</span>
+            <span class="text-[9px] sm:text-[10px] font-medium text-neutral-400 truncate">${escapeHtmlAttr(shoe.gender && shoe.gender !== 'Unisex' ? `${shoe.gender} • ` : '')}${escapeHtmlAttr(shoe.category || 'Footwear')}</span>
           `}
         </div>
 
-        <!-- Multi-Photo Horizontal Image Slider Area (Uniform Height & Width + Full Photo View) -->
+        <!-- Multi-Photo Horizontal Image Slider Area (Uniform Square Aspect Ratio + Full Photo View) -->
         <div 
           class="shoe-photo-box cursor-pointer"
           onmouseenter="handleCardMouseEnter('${shoe.id}')"
@@ -711,19 +711,19 @@ function renderProductGrid() {
               type="button"
               onclick="stepCardImage(event, '${shoe.id}', -1)" 
               aria-label="Previous angle"
-              class="card-slider-arrow absolute left-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/95 hover:bg-[#111111] text-neutral-900 hover:text-white shadow-md border border-neutral-200 flex items-center justify-center text-xs transition-all z-10">
+              class="card-slider-arrow absolute left-1 sm:left-2.5 top-1/2 -translate-y-1/2 w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-white/95 hover:bg-[#111111] text-neutral-900 hover:text-white shadow-md border border-neutral-200 flex items-center justify-center text-[10px] sm:text-xs transition-all z-10">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
             <button 
               type="button"
               onclick="stepCardImage(event, '${shoe.id}', 1)" 
               aria-label="Next angle"
-              class="card-slider-arrow absolute right-2.5 top-1/2 -translate-y-1/2 w-8 h-8 rounded-full bg-white/95 hover:bg-[#111111] text-neutral-900 hover:text-white shadow-md border border-neutral-200 flex items-center justify-center text-xs transition-all z-10">
+              class="card-slider-arrow absolute right-1 sm:right-2.5 top-1/2 -translate-y-1/2 w-6 sm:w-8 h-6 sm:h-8 rounded-full bg-white/95 hover:bg-[#111111] text-neutral-900 hover:text-white shadow-md border border-neutral-200 flex items-center justify-center text-[10px] sm:text-xs transition-all z-10">
               <i class="fa-solid fa-chevron-right"></i>
             </button>
 
             <!-- Bottom Segmented Progress Bars -->
-            <div class="absolute bottom-2.5 inset-x-3 flex items-center gap-1.5 z-10">
+            <div class="absolute bottom-2 inset-x-2 sm:bottom-2.5 sm:inset-x-3 flex items-center gap-1 sm:gap-1.5 z-10">
               ${images.map((_, idx) => `
                 <button 
                   type="button"
@@ -738,43 +738,44 @@ function renderProductGrid() {
         </div>
 
         <!-- Card Body -->
-        <div class="p-4 flex-1 flex flex-col justify-between bg-white border-t border-neutral-100">
+        <div class="p-2.5 sm:p-4 flex-1 flex flex-col justify-between bg-white border-t border-neutral-100">
           <div>
             <!-- Title -->
             <h3 
               onclick="openProductModal('${shoe.id}')" 
-              class="font-bold text-neutral-900 text-sm leading-snug line-clamp-1 cursor-pointer hover:text-[#D90429] transition-colors">
+              class="font-bold text-neutral-900 text-xs sm:text-sm leading-snug line-clamp-1 cursor-pointer hover:text-[#D90429] transition-colors"
+              title="${escapeHtmlAttr(shoe.name)}">
               ${escapeHtmlAttr(shoe.name)}
             </h3>
 
             <!-- Price Row -->
-            <div class="mt-2 flex items-baseline gap-2">
-              <span class="font-display font-bold text-lg text-neutral-900">
+            <div class="mt-1 sm:mt-2 flex items-baseline gap-1.5 sm:gap-2 flex-wrap">
+              <span class="font-display font-bold text-base sm:text-lg text-neutral-900">
                 ₹${Number(shoe.price).toLocaleString('en-IN')}
               </span>
               ${hasDiscount ? `
-                <span class="text-xs text-neutral-400 line-through">
+                <span class="text-[10px] sm:text-xs text-neutral-400 line-through">
                   ₹${Number(shoe.mrp).toLocaleString('en-IN')}
                 </span>
-                <span class="text-[11px] font-bold text-[#D90429]">
+                <span class="text-[9px] sm:text-[11px] font-bold text-[#D90429]">
                   (${discountPct}% OFF)
                 </span>
               ` : ''}
             </div>
 
-            <!-- Interactive UK Size Selector (No Size Pre-Selected by Default) -->
-            <div id="size-box-${shoe.id}" class="mt-3 pt-3 border-t border-neutral-100 rounded-lg transition-all">
-              <div class="flex items-center justify-between text-[11px] mb-1.5">
-                <span class="text-neutral-500 font-semibold uppercase tracking-wider">Select Size (UK)</span>
-                <span id="size-label-${shoe.id}" class="font-bold ${activeSize ? 'text-[#D90429]' : 'text-neutral-400'}">${activeSize || 'None selected'}</span>
+            <!-- Interactive UK Size Selector (No Size Pre-Selected by Default, Smooth Horizontal Scroll on Mobile) -->
+            <div id="size-box-${shoe.id}" class="mt-2 sm:mt-3 pt-2 sm:pt-3 border-t border-neutral-100 rounded-lg transition-all">
+              <div class="flex items-center justify-between text-[10px] sm:text-[11px] mb-1">
+                <span class="text-neutral-500 font-semibold uppercase tracking-wider">Size (UK)</span>
+                <span id="size-label-${shoe.id}" class="font-bold ${activeSize ? 'text-[#D90429]' : 'text-neutral-400'}">${activeSize ? activeSize.replace('UK ', 'UK ') : 'Select'}</span>
               </div>
-              <div class="flex flex-wrap gap-1.5">
+              <div class="flex flex-nowrap sm:flex-wrap gap-1 overflow-x-auto no-scrollbar touch-scroll py-0.5">
                 ${(shoe.sizes || []).map(sz => `
                   <button 
                     type="button"
                     onclick="selectCardSize('${shoe.id}', '${sz}')"
                     id="size-btn-${shoe.id}-${sz.replace(/\s+/g, '')}"
-                    class="size-chip px-2 py-1 rounded text-[11px] ${activeSize === sz ? 'active' : ''}">
+                    class="size-chip px-1.5 sm:px-2 py-0.5 sm:py-1 rounded text-[10px] sm:text-[11px] shrink-0 min-w-[26px] text-center ${activeSize === sz ? 'active' : ''}">
                     ${sz.replace('UK ', '')}
                   </button>
                 `).join('')}
@@ -783,20 +784,20 @@ function renderProductGrid() {
           </div>
 
           <!-- Direct WhatsApp Order Action Row (1-Click Order Now + Shortlist to WhatsApp Bag) -->
-          <div class="mt-4 pt-1 flex items-center gap-2">
+          <div class="mt-3 sm:mt-4 pt-1 flex items-center gap-1.5 sm:gap-2">
             <button 
               type="button"
               onclick="orderOnWhatsApp('${shoe.id}')"
-              class="flex-1 py-2.5 px-3 rounded-lg bg-[#111111] hover:bg-[#D90429] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors">
-              <i class="fa-brands fa-whatsapp text-base text-emerald-400"></i>
-              <span>Order Now</span>
+              class="flex-1 py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg bg-[#111111] hover:bg-[#D90429] text-white font-bold text-[11px] sm:text-xs uppercase tracking-wider flex items-center justify-center gap-1 sm:gap-1.5 transition-colors">
+              <i class="fa-brands fa-whatsapp text-sm sm:text-base text-emerald-400"></i>
+              <span class="truncate">Order Now</span>
             </button>
             <button 
               type="button"
               onclick="addToOrderBag('${shoe.id}')"
               title="Add to WhatsApp Bag to order multiple shoes together"
-              class="py-2.5 px-3 rounded-lg bg-[#F5F5F7] hover:bg-neutral-200 text-neutral-800 border border-neutral-200 font-bold text-xs flex items-center justify-center gap-1 transition-colors shrink-0">
-              <i class="fa-solid fa-plus text-[10px] text-[#D90429]"></i>
+              class="py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg bg-[#F5F5F7] hover:bg-neutral-200 text-neutral-800 border border-neutral-200 font-bold text-[11px] sm:text-xs flex items-center justify-center gap-1 transition-colors shrink-0">
+              <i class="fa-solid fa-plus text-[9px] sm:text-[10px] text-[#D90429]"></i>
               <span>Bag</span>
             </button>
           </div>
@@ -1287,11 +1288,15 @@ function openProductModal(productId) {
   const discountPct = hasDiscount ? Math.round(((shoe.mrp - shoe.price) / shoe.mrp) * 100) : 0;
 
   body.innerHTML = `
-    <div class="grid grid-cols-1 md:grid-cols-12 gap-6 sm:gap-8 items-start">
+    <div class="grid grid-cols-1 md:grid-cols-12 gap-5 sm:gap-8 items-start">
       
-      <!-- Left: Multi-Photo Horizontal Slider & Thumbnail Strip (Uniform Height & Width + Full Photo View) -->
-      <div class="md:col-span-7 space-y-3">
-        <div class="modal-photo-box rounded-xl border border-neutral-200">
+      <!-- Left: Multi-Photo Horizontal Slider & Thumbnail Strip (Uniform Aspect Ratio + Full Photo View) -->
+      <div class="md:col-span-7 space-y-2.5 sm:space-y-3">
+        <div 
+          class="modal-photo-box rounded-xl border border-neutral-200"
+          ontouchstart="handleModalTouchStart(event)"
+          ontouchend="handleModalTouchEnd(event)"
+        >
           <div 
             id="modal-slider-track" 
             class="card-slider-track" 
@@ -1305,26 +1310,26 @@ function openProductModal(productId) {
           </div>
 
           ${images.length > 1 ? `
-            <button onclick="stepModalImage(-1)" class="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/95 hover:bg-[#111111] text-neutral-900 hover:text-white shadow-md border border-neutral-200 flex items-center justify-center transition-colors z-10">
+            <button onclick="stepModalImage(-1)" aria-label="Previous image" class="absolute left-2.5 top-1/2 -translate-y-1/2 w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-white/95 hover:bg-[#111111] text-neutral-900 hover:text-white shadow-md border border-neutral-200 flex items-center justify-center text-xs transition-colors z-10">
               <i class="fa-solid fa-chevron-left"></i>
             </button>
-            <button onclick="stepModalImage(1)" class="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-white/95 hover:bg-[#111111] text-neutral-900 hover:text-white shadow-md border border-neutral-200 flex items-center justify-center transition-colors z-10">
+            <button onclick="stepModalImage(1)" aria-label="Next image" class="absolute right-2.5 top-1/2 -translate-y-1/2 w-8 sm:w-10 h-8 sm:h-10 rounded-full bg-white/95 hover:bg-[#111111] text-neutral-900 hover:text-white shadow-md border border-neutral-200 flex items-center justify-center text-xs transition-colors z-10">
               <i class="fa-solid fa-chevron-right"></i>
             </button>
-            <div class="absolute bottom-3 right-3 px-2.5 py-1 rounded bg-black/75 text-white text-xs font-semibold z-10">
+            <div class="absolute bottom-2.5 right-2.5 px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-black/75 text-white text-[10px] sm:text-xs font-semibold z-10">
               <span id="modal-photo-counter">${state.modalImageIndex + 1} / ${images.length}</span>
             </div>
           ` : ''}
         </div>
 
         ${images.length > 1 ? `
-          <div class="flex items-center gap-2.5 overflow-x-auto pb-1">
+          <div class="flex items-center gap-2 overflow-x-auto no-scrollbar touch-scroll pb-1">
             ${images.map((img, idx) => `
               <button 
                 type="button"
                 onclick="setModalImage(${idx})"
                 id="modal-thumb-${idx}"
-                class="w-16 h-16 rounded-lg overflow-hidden border-2 shrink-0 p-1 bg-white transition-all ${idx === state.modalImageIndex ? 'border-[#D90429] scale-105' : 'border-neutral-200 opacity-70 hover:opacity-100'}">
+                class="w-14 sm:w-16 h-14 sm:h-16 rounded-lg overflow-hidden border-2 shrink-0 p-1 bg-white transition-all ${idx === state.modalImageIndex ? 'border-[#D90429] scale-105' : 'border-neutral-200 opacity-70 hover:opacity-100'}">
                 <img src="${img}" class="uniform-thumb-img" />
               </button>
             `).join('')}
@@ -1333,10 +1338,10 @@ function openProductModal(productId) {
       </div>
 
       <!-- Right: Details, Size Selection & Direct WhatsApp Actions -->
-      <div class="md:col-span-5 flex flex-col justify-between space-y-5">
+      <div class="md:col-span-5 flex flex-col justify-between space-y-4 sm:space-y-5">
         <div>
           <div class="flex items-center justify-between gap-2 mb-1">
-            <div class="flex items-center gap-2 text-xs text-neutral-500 font-semibold uppercase tracking-wider">
+            <div class="flex items-center gap-1.5 sm:gap-2 text-[11px] sm:text-xs text-neutral-500 font-semibold uppercase tracking-wider">
               <span class="text-[#D90429] font-bold">${escapeHtmlAttr(shoe.brand)}</span>
               <span>•</span>
               <span class="font-bold text-neutral-800">${escapeHtmlAttr(shoe.gender || 'Unisex')}</span>
@@ -1346,40 +1351,40 @@ function openProductModal(productId) {
             <button 
               type="button"
               onclick="shareShoeOnWhatsApp('${shoe.id}')" 
-              class="text-xs font-semibold text-neutral-500 hover:text-[#111111] flex items-center gap-1"
+              class="text-xs font-semibold text-neutral-500 hover:text-[#111111] flex items-center gap-1 shrink-0"
               title="Share on WhatsApp">
               <i class="fa-solid fa-share-nodes"></i> Share
             </button>
           </div>
 
-          <h2 class="font-display text-2xl sm:text-3xl font-bold text-neutral-900 leading-tight">
+          <h2 class="font-display text-xl sm:text-3xl font-bold text-neutral-900 leading-tight">
             ${escapeHtmlAttr(shoe.name)}
           </h2>
-          <p class="text-xs text-neutral-400 font-mono mt-1">Product Code: ${shoe.id}</p>
+          <p class="text-[11px] sm:text-xs text-neutral-400 font-mono mt-1">Product Code: ${shoe.id}</p>
 
           <!-- Price Box -->
-          <div class="mt-4 pb-4 border-b border-neutral-200 flex items-baseline gap-3">
-            <span class="font-display text-3xl font-bold text-neutral-900">
+          <div class="mt-3 sm:mt-4 pb-3 sm:pb-4 border-b border-neutral-200 flex items-baseline gap-2.5 sm:gap-3">
+            <span class="font-display text-2xl sm:text-3xl font-bold text-neutral-900">
               ₹${Number(shoe.price).toLocaleString('en-IN')}
             </span>
             ${hasDiscount ? `
-              <span class="text-sm text-neutral-400 line-through">
+              <span class="text-xs sm:text-sm text-neutral-400 line-through">
                 ₹${Number(shoe.mrp).toLocaleString('en-IN')}
               </span>
-              <span class="text-xs font-bold text-[#D90429]">
+              <span class="text-[11px] sm:text-xs font-bold text-[#D90429]">
                 (${discountPct}% OFF)
               </span>
             ` : ''}
           </div>
 
           ${shoe.description ? `
-            <p class="mt-4 text-neutral-600 text-xs leading-relaxed">
+            <p class="mt-3 sm:mt-4 text-neutral-600 text-xs leading-relaxed">
               ${escapeHtmlAttr(shoe.description)}
             </p>
           ` : ''}
 
           <!-- Size Selection (No Size Pre-Selected by Default) -->
-          <div id="modal-size-box-${shoe.id}" class="mt-5 rounded-lg transition-all">
+          <div id="modal-size-box-${shoe.id}" class="mt-4 sm:mt-5 rounded-lg transition-all">
             <div class="flex items-center justify-between mb-2">
               <span class="text-xs font-bold uppercase tracking-wider text-neutral-800">
                 Select UK Size: <span id="modal-selected-size" class="${activeSize ? 'text-[#D90429]' : 'text-neutral-400'}">${activeSize || 'None selected'}</span>
@@ -1389,13 +1394,13 @@ function openProductModal(productId) {
               </button>
             </div>
 
-            <div class="grid grid-cols-4 gap-2">
+            <div class="grid grid-cols-4 gap-1.5 sm:gap-2">
               ${(shoe.sizes || []).map(sz => `
                 <button 
                   type="button"
                   onclick="selectModalSize('${shoe.id}', '${sz}')"
                   id="modal-size-${sz.replace(/\s+/g, '')}"
-                  class="size-chip py-2.5 px-3 rounded-lg text-xs ${activeSize === sz ? 'active' : ''}">
+                  class="size-chip py-2 sm:py-2.5 px-2 sm:px-3 rounded-lg text-xs ${activeSize === sz ? 'active' : ''}">
                   ${sz}
                 </button>
               `).join('')}
@@ -1403,7 +1408,7 @@ function openProductModal(productId) {
           </div>
 
           <!-- Store Dispatch & WhatsApp Live Check Info -->
-          <div class="mt-5 p-3.5 rounded-xl bg-[#F5F5F7] border border-neutral-200 space-y-2 text-xs text-neutral-600">
+          <div class="mt-4 sm:mt-5 p-3 rounded-xl bg-[#F5F5F7] border border-neutral-200 space-y-1.5 sm:space-y-2 text-[11px] sm:text-xs text-neutral-600">
             <div class="flex items-center gap-2">
               <i class="fa-solid fa-location-dot text-[#D90429] w-4 text-center"></i>
               <span>Dispatched directly from our <strong>Delhi Store</strong></span>
@@ -1416,28 +1421,29 @@ function openProductModal(productId) {
         </div>
 
         <!-- 100% WhatsApp Action Buttons (No Payment Gateway) -->
-        <div class="pt-2 space-y-2.5">
+        <div class="pt-2 space-y-2">
           <div class="flex items-center gap-2">
             <button 
               type="button"
               onclick="orderOnWhatsApp('${shoe.id}', true)"
-              class="flex-1 py-3.5 px-5 rounded-xl bg-[#111111] hover:bg-[#D90429] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-colors">
-              <i class="fa-brands fa-whatsapp text-lg text-emerald-400"></i>
+              class="flex-1 py-3 sm:py-3.5 px-4 sm:px-5 rounded-xl bg-[#111111] hover:bg-[#D90429] text-white font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-2 shadow-lg transition-colors">
+              <i class="fa-brands fa-whatsapp text-base sm:text-lg text-emerald-400"></i>
               <span>Order Now on WhatsApp</span>
             </button>
             <button 
               type="button"
               onclick="addToOrderBag('${shoe.id}', true)"
-              class="py-3.5 px-4 rounded-xl bg-[#F5F5F7] hover:bg-neutral-200 text-neutral-900 border border-neutral-300 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors shrink-0">
+              class="py-3 sm:py-3.5 px-3 sm:px-4 rounded-xl bg-[#F5F5F7] hover:bg-neutral-200 text-neutral-900 border border-neutral-300 font-bold text-xs uppercase tracking-wider flex items-center justify-center gap-1.5 transition-colors shrink-0">
               <i class="fa-solid fa-plus text-[#D90429]"></i>
-              <span>Add to Bag</span>
+              <span class="hidden sm:inline">Add to Bag</span>
+              <span class="sm:hidden">Bag</span>
             </button>
           </div>
 
           <button 
             type="button"
             onclick="requestLiveVideoOnWhatsApp('${shoe.id}')"
-            class="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200 font-semibold text-xs flex items-center justify-center gap-2 transition-colors">
+            class="w-full py-2.5 px-3 sm:px-4 rounded-xl bg-white hover:bg-neutral-50 text-neutral-700 border border-neutral-200 font-semibold text-xs flex items-center justify-center gap-2 transition-colors">
             <i class="fa-solid fa-video text-[#D90429]"></i>
             <span>Request Live Photo / Video on WhatsApp</span>
           </button>
@@ -1449,6 +1455,22 @@ function openProductModal(productId) {
 
   modal.classList.remove('hidden');
   document.body.style.overflow = 'hidden';
+}
+
+function handleModalTouchStart(event) {
+  if (event.touches && event.touches.length > 0) {
+    state.modalTouchStartX = event.touches[0].clientX;
+  }
+}
+
+function handleModalTouchEnd(event) {
+  if (state.modalTouchStartX === undefined || !event.changedTouches || event.changedTouches.length === 0) return;
+  const endX = event.changedTouches[0].clientX;
+  const diff = state.modalTouchStartX - endX;
+  delete state.modalTouchStartX;
+  if (Math.abs(diff) > 35) {
+    stepModalImage(diff > 0 ? 1 : -1);
+  }
 }
 
 function closeProductModal() {
@@ -1478,7 +1500,7 @@ function setModalImage(index) {
   images.forEach((_, idx) => {
     const thumb = document.getElementById(`modal-thumb-${idx}`);
     if (thumb) {
-      thumb.className = `w-16 h-16 rounded-lg overflow-hidden border-2 shrink-0 p-1 bg-white transition-all ${idx === state.modalImageIndex ? 'border-[#D90429] scale-105' : 'border-neutral-200 opacity-70 hover:opacity-100'}`;
+      thumb.className = `w-14 sm:w-16 h-14 sm:h-16 rounded-lg overflow-hidden border-2 shrink-0 p-1 bg-white transition-all ${idx === state.modalImageIndex ? 'border-[#D90429] scale-105' : 'border-neutral-200 opacity-70 hover:opacity-100'}`;
     }
   });
 }
