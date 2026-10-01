@@ -207,6 +207,7 @@ const server = http.createServer(async (req, res) => {
         name: payload.name,
         brand: payload.brand,
         category: payload.category || 'Sneakers',
+        gender: payload.gender || 'Unisex',
         price: Number(payload.price) || 0,
         mrp: Number(payload.mrp) || Number(payload.price) || 0,
         sizes: Array.isArray(payload.sizes) && payload.sizes.length > 0 ? payload.sizes : ['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10'],
@@ -254,6 +255,7 @@ const server = http.createServer(async (req, res) => {
         name: payload.name ?? products[idx].name,
         brand: payload.brand ?? products[idx].brand,
         category: payload.category ?? products[idx].category,
+        gender: payload.gender ?? products[idx].gender ?? 'Unisex',
         price: payload.price !== undefined ? Number(payload.price) : products[idx].price,
         mrp: payload.mrp !== undefined ? Number(payload.mrp) : products[idx].mrp,
         sizes: payload.sizes ?? products[idx].sizes,
@@ -309,6 +311,49 @@ const server = http.createServer(async (req, res) => {
       writeSettings(updated);
       res.writeHead(200, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify(updated));
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  // --- DEDICATED ADMIN AUTHENTICATION & PIN MANAGEMENT ---
+  if (pathname === '/api/admin/login' && req.method === 'POST') {
+    try {
+      const payload = await parseJsonBody(req);
+      const settings = readSettings();
+      const enteredPin = String(payload.pin || '').trim();
+      const actualPin = String(settings.adminPin || '8080').trim();
+
+      if (enteredPin && enteredPin === actualPin) {
+        res.writeHead(200, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: true, message: 'Admin authenticated' }));
+      } else {
+        res.writeHead(401, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ success: false, error: 'Incorrect Admin PIN' }));
+      }
+    } catch (err) {
+      res.writeHead(400, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: err.message }));
+    }
+    return;
+  }
+
+  if (pathname === '/api/admin/change-pin' && req.method === 'POST') {
+    try {
+      const payload = await parseJsonBody(req);
+      const newPin = String(payload.newPin || '').trim();
+      if (!newPin || newPin.length < 3) {
+        res.writeHead(400, { 'Content-Type': 'application/json' });
+        res.end(JSON.stringify({ error: 'PIN must be at least 3 characters' }));
+        return;
+      }
+      const settings = readSettings();
+      settings.adminPin = newPin;
+      writeSettings(settings);
+      res.writeHead(200, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ success: true, message: 'Admin PIN updated successfully' }));
     } catch (err) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: err.message }));

@@ -13,6 +13,7 @@ const state = {
   brands: [],
   activeBrand: 'All',
   activeCategory: 'All',
+  activeGender: 'All',
   activeSize: 'All',
   activePriceRange: 'All',
   searchQuery: '',
@@ -339,11 +340,34 @@ function filterByBrand(brand) {
 }
 
 /**
+ * Filter by Gender (Men / Women / Unisex / All)
+ */
+function filterByGender(gender) {
+  state.activeGender = gender;
+  state.currentPage = 1;
+
+  const validGenders = ['All', 'Men', 'Women', 'Unisex'];
+  validGenders.forEach(g => {
+    const btn = document.getElementById(`gender-pill-${g}`);
+    if (btn) {
+      if (g === gender) {
+        btn.className = 'gender-nav-pill px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#111111] text-white shadow-sm';
+      } else {
+        btn.className = 'gender-nav-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-all';
+      }
+    }
+  });
+
+  applyFiltersAndRender();
+}
+
+/**
  * Reset all active filters
  */
 function resetAllFilters() {
   state.activeBrand = 'All';
   state.activeCategory = 'All';
+  state.activeGender = 'All';
   state.activeSize = 'All';
   state.activePriceRange = 'All';
   state.searchQuery = '';
@@ -366,6 +390,16 @@ function resetAllFilters() {
   if (srt) srt.value = 'newest';
   if (headingEl) headingEl.textContent = 'All Footwear';
 
+  const validGenders = ['All', 'Men', 'Women', 'Unisex'];
+  validGenders.forEach(g => {
+    const btn = document.getElementById(`gender-pill-${g}`);
+    if (btn) {
+      btn.className = g === 'All'
+        ? 'gender-nav-pill px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all bg-[#111111] text-white shadow-sm'
+        : 'gender-nav-pill px-3.5 py-1.5 rounded-lg text-xs font-semibold text-neutral-600 hover:text-neutral-900 transition-all';
+    }
+  });
+
   renderBrandsUI();
   applyFiltersAndRender();
 }
@@ -381,6 +415,9 @@ function renderActiveFilterPills() {
 
   if (state.activeBrand !== 'All') {
     pills.push({ label: `Brand: ${state.activeBrand}`, action: "filterByBrand('All')" });
+  }
+  if (state.activeGender !== 'All') {
+    pills.push({ label: `Dept: ${state.activeGender}`, action: "filterByGender('All')" });
   }
   if (state.activeCategory !== 'All') {
     pills.push({ label: `Category: ${state.activeCategory}`, action: "clearSingleFilter('category')" });
@@ -459,6 +496,13 @@ function applyFiltersAndRender() {
     }
     if (state.activeCategory !== 'All' && item.category !== state.activeCategory) {
       return false;
+    }
+    if (state.activeGender !== 'All') {
+      const g = (item.gender || 'Unisex').toLowerCase();
+      const targetG = state.activeGender.toLowerCase();
+      if (targetG === 'men' && g !== 'men' && g !== 'unisex') return false;
+      if (targetG === 'women' && g !== 'women' && g !== 'unisex') return false;
+      if (targetG === 'unisex' && g !== 'unisex') return false;
     }
     if (state.activeSize !== 'All' && (!item.sizes || !item.sizes.includes(state.activeSize))) {
       return false;
@@ -598,6 +642,11 @@ function renderProductGrid() {
             <span class="px-2.5 py-1 rounded bg-[#F5F5F7] border border-neutral-200 text-neutral-900 font-bold text-[10px] uppercase tracking-wider truncate">
               ${escapeHtmlAttr(shoe.brand)}
             </span>
+            ${shoe.gender && shoe.gender !== 'Unisex' ? `
+              <span class="px-1.5 py-0.5 rounded ${shoe.gender === 'Women' ? 'bg-pink-50 text-pink-700 border-pink-200' : 'bg-blue-50 text-blue-700 border-blue-200'} border font-bold text-[9px] uppercase tracking-wider shrink-0">
+                ${escapeHtmlAttr(shoe.gender)}
+              </span>
+            ` : ''}
             ${totalImgs > 1 ? `
               <span id="photo-badge-${shoe.id}" class="px-2 py-1 rounded bg-[#111111] text-white font-semibold text-[10px] tracking-wide flex items-center gap-1 shrink-0">
                 <i class="fa-regular fa-images text-[9px]"></i>
@@ -609,14 +658,14 @@ function renderProductGrid() {
           ${state.isAdmin ? `
             <div class="flex items-center gap-1.5 shrink-0">
               <button 
-                type="button"
+                type="button" 
                 onclick="openEditProductModal(event, '${shoe.id}')" 
                 title="Edit Shoe & Photos"
                 class="w-7 h-7 rounded-full bg-[#F5F5F7] hover:bg-neutral-900 text-neutral-700 hover:text-white border border-neutral-200 flex items-center justify-center text-[11px] transition-colors">
                 <i class="fa-solid fa-pen"></i>
               </button>
               <button 
-                type="button"
+                type="button" 
                 onclick="handleDeleteProduct(event, '${shoe.id}')" 
                 title="Delete Shoe"
                 class="w-7 h-7 rounded-full bg-[#F5F5F7] hover:bg-[#D90429] text-[#D90429] hover:text-white border border-neutral-200 flex items-center justify-center text-[11px] transition-colors">
@@ -624,7 +673,7 @@ function renderProductGrid() {
               </button>
             </div>
           ` : `
-            <span class="text-[10px] font-medium text-neutral-400 truncate">${escapeHtmlAttr(shoe.category || 'Footwear')}</span>
+            <span class="text-[10px] font-medium text-neutral-400 truncate">${escapeHtmlAttr(shoe.gender && shoe.gender !== 'Unisex' ? `${shoe.gender} • ` : '')}${escapeHtmlAttr(shoe.category || 'Footwear')}</span>
           `}
         </div>
 
@@ -1290,6 +1339,8 @@ function openProductModal(productId) {
             <div class="flex items-center gap-2 text-xs text-neutral-500 font-semibold uppercase tracking-wider">
               <span class="text-[#D90429] font-bold">${escapeHtmlAttr(shoe.brand)}</span>
               <span>•</span>
+              <span class="font-bold text-neutral-800">${escapeHtmlAttr(shoe.gender || 'Unisex')}</span>
+              <span>•</span>
               <span>${escapeHtmlAttr(shoe.category || 'Footwear')}</span>
             </div>
             <button 
@@ -1565,22 +1616,55 @@ function closeAdminLoginModal() {
   if (modal) modal.classList.add('hidden');
 }
 
-function handleAdminLogin(e) {
+async function handleAdminLogin(e) {
   e.preventDefault();
   const pinInput = document.getElementById('admin-pin-input');
   const err = document.getElementById('admin-login-error');
   const entered = (pinInput ? pinInput.value : '').trim();
 
-  if (entered === state.adminPin) {
+  // 1. Authenticate against server endpoint (checks settings.json directly on cloud server)
+  try {
+    const res = await fetch('/api/admin/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ pin: entered })
+    });
+    if (res.ok) {
+      state.isAdmin = true;
+      state.adminPin = entered;
+      localStorage.setItem('fmk_admin_pin', entered);
+      sessionStorage.setItem('fmk_admin_unlocked', 'true');
+      closeAdminLoginModal();
+      updateAdminUI();
+      renderBrandsUI();
+      renderProductGrid();
+      showToast('Admin Mode unlocked.');
+      return;
+    } else {
+      // Server rejected the PIN!
+      if (err) {
+        err.classList.remove('hidden');
+        err.textContent = 'Incorrect Admin PIN.';
+      }
+      return;
+    }
+  } catch (_) {}
+
+  // 2. Fallback only if offline / static server
+  if (entered && entered === state.adminPin) {
     state.isAdmin = true;
     sessionStorage.setItem('fmk_admin_unlocked', 'true');
     closeAdminLoginModal();
     updateAdminUI();
     renderBrandsUI();
     renderProductGrid();
-    showToast('Admin Mode unlocked. You can now upload multi-photo shoes & manage brands.');
-  } else {
-    if (err) err.classList.remove('hidden');
+    showToast('Admin Mode unlocked.');
+    return;
+  }
+
+  if (err) {
+    err.classList.remove('hidden');
+    err.textContent = 'Incorrect Admin PIN.';
   }
 }
 
@@ -1617,6 +1701,9 @@ function openAddProductModal() {
   document.getElementById('product-form-title').textContent = 'Upload New Shoe';
   document.getElementById('save-shoe-submit-btn').textContent = 'Save & Publish Shoe';
 
+  const genderEl = document.getElementById('new-shoe-gender');
+  if (genderEl) genderEl.value = 'Unisex';
+
   renderBrandsUI();
 
   state.stagedUploadImages = [];
@@ -1645,6 +1732,8 @@ function openEditProductModal(event, productId) {
   document.getElementById('new-shoe-name').value = shoe.name || '';
   document.getElementById('new-shoe-brand').value = shoe.brand || state.brands[0] || 'Nike';
   document.getElementById('new-shoe-category').value = shoe.category || 'Sneakers';
+  const editGenderEl = document.getElementById('new-shoe-gender');
+  if (editGenderEl) editGenderEl.value = shoe.gender || 'Unisex';
   document.getElementById('new-shoe-price').value = shoe.price || '';
   document.getElementById('new-shoe-mrp').value = shoe.mrp || '';
   document.getElementById('new-shoe-desc').value = shoe.description || '';
@@ -1822,6 +1911,7 @@ async function handleSaveProduct(e) {
   const name = document.getElementById('new-shoe-name').value.trim();
   const brand = document.getElementById('new-shoe-brand').value;
   const category = document.getElementById('new-shoe-category').value;
+  const gender = document.getElementById('new-shoe-gender')?.value || 'Unisex';
   const price = Number(document.getElementById('new-shoe-price').value);
   const mrpInput = Number(document.getElementById('new-shoe-mrp').value);
   const mrp = mrpInput > price ? mrpInput : price;
@@ -1847,6 +1937,7 @@ async function handleSaveProduct(e) {
       name,
       brand,
       category,
+      gender,
       price,
       mrp,
       sizes: checkedSizes,
@@ -1938,9 +2029,17 @@ async function saveStoreSettings() {
     localStorage.setItem('fmk_store_address', state.storeAddress);
   }
 
-  if (pinInput && pinInput.value.trim()) {
-    state.adminPin = pinInput.value.trim();
-    localStorage.setItem('fmk_admin_pin', state.adminPin);
+  const newPin = pinInput ? pinInput.value.trim() : '';
+  if (newPin) {
+    state.adminPin = newPin;
+    localStorage.setItem('fmk_admin_pin', newPin);
+    try {
+      await fetch('/api/admin/change-pin', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ newPin })
+      });
+    } catch (_) {}
   }
 
   try {

@@ -233,6 +233,7 @@ const InventoryAPI = {
       name: productData.name,
       brand: productData.brand,
       category: productData.category || 'Sneakers',
+      gender: productData.gender || 'Unisex',
       price: Number(productData.price) || 0,
       mrp: Number(productData.mrp) || Number(productData.price) || 0,
       sizes: productData.sizes || ['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10'],
