@@ -50,6 +50,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   updateStoreSettingsUI();
   updateAdminUI();
   renderOrderBagUI();
+  initLiveAutoSync();
 });
 
 /**
@@ -256,6 +257,100 @@ async function refreshInventory() {
 
   applyFiltersAndRender();
   renderBrandsUI();
+  if (typeof catalogSyncHash !== 'undefined') {
+    catalogSyncHash = computeCatalogHash(state.allProducts);
+  }
+}
+
+let catalogSyncHash = '';
+
+function computeCatalogHash(products) {
+  if (!Array.isArray(products)) return '';
+  return products.map(p => `${p.id}:${p.price}:${p.inStock}:${(p.sizes || []).join(',')}:${(p.images || []).length}`).join('|');
+}
+
+/**
+ * Ultra-fast Live Background Auto-Sync
+ * Reflects new shoe uploads, price edits, or deletions across all phones & laptops in ~5 seconds
+ * with zero page reload required.
+ */
+function initLiveAutoSync() {
+  catalogSyncHash = computeCatalogHash(state.allProducts);
+  let pollInterval = null;
+  let isChecking = false;
+
+  const checkLiveSync = async () => {
+    if (isChecking) return;
+    isChecking = true;
+
+    try {
+      // Do not interrupt if admin is currently typing in the Add / Edit shoe modal
+      const addModal = document.getElementById('add-product-modal');
+      const isEditingForm = addModal && !addModal.classList.contains('hidden');
+
+      const latestProducts = await window.InventoryAPI.fetchAll();
+      const newHash = computeCatalogHash(latestProducts);
+
+      if (newHash && newHash !== catalogSyncHash) {
+        const prevCount = state.allProducts.length;
+        const newCount = latestProducts.length;
+        catalogSyncHash = newHash;
+        state.allProducts = latestProducts;
+
+        // Auto-discover newly added brands
+        let brandsChanged = false;
+        for (const shoe of state.allProducts) {
+          if (shoe.brand && !state.brands.some(b => b.toLowerCase() === shoe.brand.toLowerCase())) {
+            state.brands.push(shoe.brand);
+            brandsChanged = true;
+          }
+        }
+        if (brandsChanged) renderBrandsUI();
+
+        // Initialize active image index
+        state.allProducts.forEach(shoe => {
+          if (state.activeCardImageIdx[shoe.id] === undefined) {
+            state.activeCardImageIdx[shoe.id] = 0;
+          }
+        });
+
+        // Re-render catalog smoothly
+        applyFiltersAndRender();
+
+        // If another device uploaded new shoe(s), show sleek toast
+        if (newCount > prevCount && !isEditingForm) {
+          showToast(`🔥 Catalog updated! (${newCount - prevCount} new sneaker${newCount - prevCount > 1 ? 's' : ''})`);
+        }
+      }
+    } catch (_) {
+      // Silent catch on background network hiccups
+    } finally {
+      isChecking = false;
+    }
+  };
+
+  const startFastPolling = () => {
+    if (pollInterval) clearInterval(pollInterval);
+    pollInterval = setInterval(checkLiveSync, 5000); // Minimum time: 5 seconds!
+  };
+
+  // Immediate sync when tab becomes visible (user unlocks phone or returns from WhatsApp)
+  document.addEventListener('visibilitychange', () => {
+    if (document.hidden) {
+      if (pollInterval) clearInterval(pollInterval);
+      pollInterval = setInterval(checkLiveSync, 20000);
+    } else {
+      checkLiveSync();
+      startFastPolling();
+    }
+  });
+
+  // Immediate sync when browser window receives focus
+  window.addEventListener('focus', () => {
+    checkLiveSync();
+  });
+
+  startFastPolling();
 }
 
 /**

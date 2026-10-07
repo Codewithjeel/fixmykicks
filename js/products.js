@@ -200,31 +200,32 @@ const InventoryAPI = {
       } catch (_) {}
     }
 
-    const localItems = await idbGetAll();
-    const mergedMap = new Map();
-
-    serverItems.forEach(item => {
-      if (item && item.id) mergedMap.set(item.id, item);
-    });
-
-    for (const localItem of localItems) {
-      if (localItem && localItem.id && !mergedMap.has(localItem.id)) {
-        mergedMap.set(localItem.id, localItem);
-        if (apiAvailable) {
-          try {
-            await fetch('/api/products', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(localItem)
-            });
-          } catch (_) {}
+    if (apiAvailable) {
+      try {
+        const localItems = await idbGetAll();
+        const serverIds = new Set(serverItems.map(s => s && s.id).filter(Boolean));
+        // Remove locally cached items that were removed from server
+        for (const localItem of localItems) {
+          if (localItem && localItem.id && !serverIds.has(localItem.id)) {
+            await idbDelete(localItem.id);
+          }
         }
-      }
+        // Cache server items in IndexedDB for offline resilience
+        for (const item of serverItems) {
+          if (item && item.id) {
+            await idbSave(item);
+          }
+        }
+      } catch (_) {}
+
+      serverItems.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      return serverItems;
     }
 
-    const combined = Array.from(mergedMap.values());
-    combined.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    return combined;
+    // Offline fallback when server cannot be reached
+    const localItems = await idbGetAll();
+    localItems.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    return localItems;
   },
 
   async create(productData) {
