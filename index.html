@@ -31,7 +31,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
 
   <!-- Custom Styles -->
-  <link rel="stylesheet" href="css/styles.css?v=8" />
+  <link rel="stylesheet" href="css/styles.css?v=9" />
 </head>
 <body class="bg-white text-neutral-900 min-h-screen flex flex-col">
 
@@ -305,17 +305,19 @@
           <option value="Basketball">Basketball</option>
         </select>
 
-        <!-- Size Select -->
+        <!-- Size Select (Covers 36 to 45) -->
         <select id="size-filter" class="w-full sm:w-auto py-2 px-2.5 sm:px-3 rounded-lg bg-[#F5F5F7] border border-neutral-200 text-neutral-800 text-xs font-medium focus:outline-none focus:border-neutral-900">
-          <option value="All">All Sizes (UK)</option>
-          <option value="UK 5">UK 5</option>
-          <option value="UK 6">UK 6</option>
-          <option value="UK 7">UK 7</option>
-          <option value="UK 8">UK 8</option>
-          <option value="UK 9">UK 9</option>
-          <option value="UK 10">UK 10</option>
-          <option value="UK 11">UK 11</option>
-          <option value="UK 12">UK 12</option>
+          <option value="All">All Sizes (36 to 45)</option>
+          <option value="36">EU 36 (UK 3.5)</option>
+          <option value="37">EU 37 (UK 4)</option>
+          <option value="38">EU 38 (UK 5)</option>
+          <option value="39">EU 39 (UK 5.5)</option>
+          <option value="40">EU 40 (UK 6)</option>
+          <option value="41">EU 41 (UK 7)</option>
+          <option value="42">EU 42 (UK 8)</option>
+          <option value="43">EU 43 (UK 9)</option>
+          <option value="44">EU 44 (UK 10)</option>
+          <option value="45">EU 45 (UK 11)</option>
         </select>
 
         <!-- Budget / Price Range Select -->
@@ -385,21 +387,23 @@
             </div>
             <div>
               <label class="block text-[11px] font-bold uppercase tracking-wider text-neutral-400 mb-1">
-                Your UK Size *
+                Your Size (EU 36 to 45) *
               </label>
               <select 
                 id="req-shoe-size" 
                 required
                 class="w-full py-2.5 px-3 rounded-lg bg-neutral-900 border border-neutral-700 text-white text-xs focus:outline-none focus:border-[#D90429]">
-                <option value="" selected disabled>Select UK Size</option>
-                <option value="UK 5">UK 5 (EU 38)</option>
-                <option value="UK 6">UK 6 (EU 40)</option>
-                <option value="UK 7">UK 7 (EU 41)</option>
-                <option value="UK 8">UK 8 (EU 42)</option>
-                <option value="UK 9">UK 9 (EU 43)</option>
-                <option value="UK 10">UK 10 (EU 44)</option>
-                <option value="UK 11">UK 11 (EU 45)</option>
-                <option value="UK 12">UK 12 (EU 46)</option>
+                <option value="" selected disabled>Select Size (36 to 45)</option>
+                <option value="EU 36 (UK 3.5)">EU 36 (UK 3.5 / 22.5 cm)</option>
+                <option value="EU 37 (UK 4)">EU 37 (UK 4 / 23.5 cm)</option>
+                <option value="EU 38 (UK 5)">EU 38 (UK 5 / 24.0 cm)</option>
+                <option value="EU 39 (UK 5.5)">EU 39 (UK 5.5 / 24.5 cm)</option>
+                <option value="EU 40 (UK 6)">EU 40 (UK 6 / 25.0 cm)</option>
+                <option value="EU 41 (UK 7)">EU 41 (UK 7 / 26.0 cm)</option>
+                <option value="EU 42 (UK 8)">EU 42 (UK 8 / 26.5 cm)</option>
+                <option value="EU 43 (UK 9)">EU 43 (UK 9 / 27.5 cm)</option>
+                <option value="EU 44 (UK 10)">EU 44 (UK 10 / 28.5 cm)</option>
+                <option value="EU 45 (UK 11)">EU 45 (UK 11 / 29.5 cm)</option>
               </select>
             </div>
           </div>
@@ -729,37 +733,64 @@
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700">
-              Shoe Slider Photos (Upload Multiple from Device) *
+              Shoe Slider Photos (Upload from Any Device) *
             </label>
-            <button 
-              type="button" 
-              onclick="document.getElementById('shoe-photo-files').click()" 
-              class="text-xs font-bold text-[#D90429] hover:underline flex items-center gap-1">
-              <i class="fa-solid fa-plus"></i> Add More Photos
-            </button>
+            <div class="flex items-center gap-2">
+              <label for="shoe-photo-files" class="text-xs font-bold text-[#D90429] hover:underline flex items-center gap-1 cursor-pointer">
+                <i class="fa-solid fa-plus"></i> Gallery
+              </label>
+              <label for="shoe-photo-camera" class="sm:hidden text-xs font-bold text-emerald-600 hover:underline flex items-center gap-1 cursor-pointer">
+                <i class="fa-solid fa-camera"></i> Camera
+              </label>
+            </div>
           </div>
           
-          <div 
+          <label 
+            for="shoe-photo-files" 
             id="photo-dropzone"
-            onclick="document.getElementById('shoe-photo-files').click()"
-            class="border-2 border-dashed border-neutral-300 hover:border-[#D90429] rounded-xl p-5 text-center cursor-pointer bg-[#F5F5F7]/60 transition-colors">
+            class="block border-2 border-dashed border-neutral-300 hover:border-[#D90429] rounded-2xl p-5 sm:p-6 text-center cursor-pointer bg-[#F5F5F7]/60 hover:bg-red-50/20 transition-all">
             <input 
               type="file" 
               id="shoe-photo-files" 
               accept="image/*" 
               multiple 
-              class="hidden" 
+              class="sr-only" 
               onchange="handleSystemFilesSelected(event)"
             />
-            <div class="w-11 h-11 rounded-full bg-white border border-neutral-200 mx-auto flex items-center justify-center text-[#D90429] mb-2.5 shadow-sm">
-              <i class="fa-solid fa-images text-lg"></i>
+            <input 
+              type="file" 
+              id="shoe-photo-camera" 
+              accept="image/*" 
+              capture="environment" 
+              class="sr-only" 
+              onchange="handleSystemFilesSelected(event)"
+            />
+            <div class="w-12 h-12 rounded-full bg-white border border-neutral-200 mx-auto flex items-center justify-center text-[#D90429] mb-2.5 shadow-sm">
+              <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
             </div>
-            <p class="text-sm font-semibold text-neutral-900">
-              Click to select 1 or multiple photos from your device
+            <p class="text-sm font-bold text-neutral-900">
+              Tap to Select Photos from Device / Gallery
             </p>
-            <p class="text-xs text-neutral-500 mt-1">
-              You can select multiple photos together or click "Add More Photos" to add side, back, top &amp; sole angles.
+            <p class="text-xs text-neutral-500 mt-1 max-w-sm mx-auto">
+              Select 1 or multiple photos (side, top, back, sole). Auto-optimized instantly for ultra-fast loading.
             </p>
+            <div class="mt-3 flex items-center justify-center gap-2">
+              <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-neutral-200 text-[11px] font-semibold text-neutral-700 shadow-sm">
+                <i class="fa-solid fa-images text-[#D90429]"></i> Choose Photos
+              </span>
+              <span class="sm:hidden inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white border border-neutral-200 text-[11px] font-semibold text-neutral-700 shadow-sm" onclick="event.preventDefault(); document.getElementById('shoe-photo-camera').click();">
+                <i class="fa-solid fa-camera text-emerald-500"></i> Snap with Camera
+              </span>
+            </div>
+          </label>
+
+          <!-- Real-time Processing & Optimization Progress Indicator -->
+          <div id="upload-processing-bar" class="hidden mt-3 p-3 bg-neutral-900 text-white rounded-xl text-xs flex items-center justify-between shadow-md">
+            <div class="flex items-center gap-2.5">
+              <i class="fa-solid fa-circle-notch fa-spin text-[#D90429] text-sm"></i>
+              <span id="upload-processing-text" class="font-medium">Optimizing photos...</span>
+            </div>
+            <span id="upload-processing-count" class="font-mono text-emerald-400 font-bold text-[11px]">Processing</span>
           </div>
 
           <!-- Selected Photos Preview Strip with Reorder Controls -->
@@ -769,9 +800,9 @@
                 Slider Photos (<span id="upload-photo-count">0</span> angles uploaded) — First photo is the Cover
               </span>
               <div class="flex items-center gap-3">
-                <button type="button" onclick="document.getElementById('shoe-photo-files').click()" class="text-xs font-bold text-neutral-900 hover:text-[#D90429]">
+                <label for="shoe-photo-files" class="text-xs font-bold text-neutral-900 hover:text-[#D90429] cursor-pointer">
                   + Add Another Angle
-                </button>
+                </label>
                 <button type="button" onclick="clearSelectedUploadPhotos()" class="text-xs text-[#D90429] hover:underline font-medium">
                   Clear All
                 </button>
@@ -886,40 +917,66 @@
           </div>
         </div>
 
-        <!-- Available Sizes Checkboxes -->
+        <!-- Available Sizes Checkboxes (Covers 36 to 45) -->
         <div>
           <div class="flex items-center justify-between mb-2">
             <label class="block text-xs font-bold uppercase tracking-wider text-neutral-700">
-              Available Sizes (UK) *
+              Available Sizes (EU 36 to 45) *
             </label>
             <button type="button" onclick="toggleAllAdminSizes()" class="text-xs font-semibold text-[#D90429] hover:underline">
               Select / Deselect All
             </button>
           </div>
-          <div class="grid grid-cols-4 sm:grid-cols-8 gap-2" id="admin-sizes-checkboxes">
-            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
-              <input type="checkbox" name="shoe_size" value="UK 5" class="accent-[#D90429]" /> UK 5
+          <div class="grid grid-cols-5 sm:grid-cols-10 gap-1.5 sm:gap-2" id="admin-sizes-checkboxes">
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 3.5 (EU 36)" class="accent-[#D90429] mb-1" />
+              <span class="font-bold">36</span>
+              <span class="text-[9px] text-neutral-500">UK 3.5</span>
             </label>
-            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
-              <input type="checkbox" name="shoe_size" value="UK 6" checked class="accent-[#D90429]" /> UK 6
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 4 (EU 37)" class="accent-[#D90429] mb-1" />
+              <span class="font-bold">37</span>
+              <span class="text-[9px] text-neutral-500">UK 4</span>
             </label>
-            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
-              <input type="checkbox" name="shoe_size" value="UK 7" checked class="accent-[#D90429]" /> UK 7
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 5 (EU 38)" checked class="accent-[#D90429] mb-1" />
+              <span class="font-bold">38</span>
+              <span class="text-[9px] text-neutral-500">UK 5</span>
             </label>
-            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
-              <input type="checkbox" name="shoe_size" value="UK 8" checked class="accent-[#D90429]" /> UK 8
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 5.5 (EU 39)" checked class="accent-[#D90429] mb-1" />
+              <span class="font-bold">39</span>
+              <span class="text-[9px] text-neutral-500">UK 5.5</span>
             </label>
-            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
-              <input type="checkbox" name="shoe_size" value="UK 9" checked class="accent-[#D90429]" /> UK 9
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 6 (EU 40)" checked class="accent-[#D90429] mb-1" />
+              <span class="font-bold">40</span>
+              <span class="text-[9px] text-neutral-500">UK 6</span>
             </label>
-            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
-              <input type="checkbox" name="shoe_size" value="UK 10" checked class="accent-[#D90429]" /> UK 10
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 7 (EU 41)" checked class="accent-[#D90429] mb-1" />
+              <span class="font-bold">41</span>
+              <span class="text-[9px] text-neutral-500">UK 7</span>
             </label>
-            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
-              <input type="checkbox" name="shoe_size" value="UK 11" class="accent-[#D90429]" /> UK 11
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 8 (EU 42)" checked class="accent-[#D90429] mb-1" />
+              <span class="font-bold">42</span>
+              <span class="text-[9px] text-neutral-500">UK 8</span>
             </label>
-            <label class="flex items-center justify-center gap-1.5 py-2 px-2 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-xs font-semibold select-none">
-              <input type="checkbox" name="shoe_size" value="UK 12" class="accent-[#D90429]" /> UK 12
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 9 (EU 43)" checked class="accent-[#D90429] mb-1" />
+              <span class="font-bold">43</span>
+              <span class="text-[9px] text-neutral-500">UK 9</span>
+            </label>
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 10 (EU 44)" checked class="accent-[#D90429] mb-1" />
+              <span class="font-bold">44</span>
+              <span class="text-[9px] text-neutral-500">UK 10</span>
+            </label>
+            <label class="flex flex-col items-center justify-center py-2 px-1 rounded-lg border border-neutral-300 bg-[#F5F5F7] cursor-pointer text-[11px] font-semibold select-none hover:border-neutral-900">
+              <input type="checkbox" name="shoe_size" value="UK 11 (EU 45)" class="accent-[#D90429] mb-1" />
+              <span class="font-bold">45</span>
+              <span class="text-[9px] text-neutral-500">UK 11</span>
             </label>
           </div>
         </div>
@@ -1006,32 +1063,34 @@
         <i class="fa-solid fa-xmark"></i>
       </button>
 
-      <h3 class="font-display text-xl font-bold uppercase text-neutral-900 mb-1">
-        UK / India Size Conversion Guide
+      <h3 class="font-display text-xl sm:text-2xl font-bold uppercase text-neutral-900 mb-1">
+        Euro / UK Footwear Size Guide
       </h3>
-      <p class="text-neutral-500 text-xs mb-5">
-        Measure your foot length in CM or check your regular UK size below. Need help choosing? Ask us on WhatsApp.
+      <p class="text-neutral-500 text-xs mb-4">
+        Complete size conversion from <strong>EU 36 to EU 45</strong> with UK, US, and foot length in centimeters (CM).
       </p>
 
-      <div class="overflow-x-auto rounded-lg border border-neutral-200 mb-4">
+      <div class="overflow-x-auto rounded-xl border border-neutral-200 mb-4">
         <table class="w-full text-left text-xs text-neutral-700">
           <thead class="bg-[#F5F5F7] text-neutral-900 uppercase font-bold border-b border-neutral-200">
             <tr>
-              <th class="py-3 px-4">UK / India</th>
-              <th class="py-3 px-4">EU Size</th>
-              <th class="py-3 px-4">US Men</th>
-              <th class="py-3 px-4">Foot Length (CM)</th>
+              <th class="py-2.5 px-3 sm:px-4">Euro (EU)</th>
+              <th class="py-2.5 px-3 sm:px-4">UK / India</th>
+              <th class="py-2.5 px-3 sm:px-4">US Men</th>
+              <th class="py-2.5 px-3 sm:px-4">Foot Length (CM)</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-neutral-200">
-            <tr><td class="py-2.5 px-4 font-bold">UK 5</td><td class="py-2.5 px-4">EU 38</td><td class="py-2.5 px-4">US 6</td><td class="py-2.5 px-4">23.5 cm</td></tr>
-            <tr><td class="py-2.5 px-4 font-bold">UK 6</td><td class="py-2.5 px-4">EU 40</td><td class="py-2.5 px-4">US 7</td><td class="py-2.5 px-4">24.5 cm</td></tr>
-            <tr><td class="py-2.5 px-4 font-bold">UK 7</td><td class="py-2.5 px-4">EU 41</td><td class="py-2.5 px-4">US 8</td><td class="py-2.5 px-4">25.5 cm</td></tr>
-            <tr><td class="py-2.5 px-4 font-bold">UK 8</td><td class="py-2.5 px-4">EU 42</td><td class="py-2.5 px-4">US 9</td><td class="py-2.5 px-4">26.5 cm</td></tr>
-            <tr><td class="py-2.5 px-4 font-bold">UK 9</td><td class="py-2.5 px-4">EU 43</td><td class="py-2.5 px-4">US 10</td><td class="py-2.5 px-4">27.5 cm</td></tr>
-            <tr><td class="py-2.5 px-4 font-bold">UK 10</td><td class="py-2.5 px-4">EU 44</td><td class="py-2.5 px-4">US 11</td><td class="py-2.5 px-4">28.5 cm</td></tr>
-            <tr><td class="py-2.5 px-4 font-bold">UK 11</td><td class="py-2.5 px-4">EU 45</td><td class="py-2.5 px-4">US 12</td><td class="py-2.5 px-4">29.5 cm</td></tr>
-            <tr><td class="py-2.5 px-4 font-bold">UK 12</td><td class="py-2.5 px-4">EU 46</td><td class="py-2.5 px-4">US 13</td><td class="py-2.5 px-4">30.5 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 36</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 3.5</td><td class="py-2.5 px-3 sm:px-4">US 4.5</td><td class="py-2.5 px-3 sm:px-4">22.5 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 37</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 4</td><td class="py-2.5 px-3 sm:px-4">US 5</td><td class="py-2.5 px-3 sm:px-4">23.5 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 38</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 5</td><td class="py-2.5 px-3 sm:px-4">US 6</td><td class="py-2.5 px-3 sm:px-4">24.0 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 39</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 5.5</td><td class="py-2.5 px-3 sm:px-4">US 6.5</td><td class="py-2.5 px-3 sm:px-4">24.5 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 40</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 6</td><td class="py-2.5 px-3 sm:px-4">US 7</td><td class="py-2.5 px-3 sm:px-4">25.0 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 41</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 7</td><td class="py-2.5 px-3 sm:px-4">US 8</td><td class="py-2.5 px-3 sm:px-4">26.0 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 42</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 8</td><td class="py-2.5 px-3 sm:px-4">US 9</td><td class="py-2.5 px-3 sm:px-4">26.5 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 43</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 9</td><td class="py-2.5 px-3 sm:px-4">US 10</td><td class="py-2.5 px-3 sm:px-4">27.5 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 44</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 10</td><td class="py-2.5 px-3 sm:px-4">US 11</td><td class="py-2.5 px-4">28.5 cm</td></tr>
+            <tr class="hover:bg-neutral-50"><td class="py-2.5 px-3 sm:px-4 font-bold text-neutral-900">EU 45</td><td class="py-2.5 px-3 sm:px-4 font-semibold text-[#D90429]">UK 11</td><td class="py-2.5 px-3 sm:px-4">US 12</td><td class="py-2.5 px-4">29.5 cm</td></tr>
           </tbody>
         </table>
       </div>
@@ -1156,7 +1215,7 @@
   <div id="toast-container" class="fixed bottom-5 left-5 z-50 flex flex-col gap-2 max-w-sm"></div>
 
   <!-- Scripts -->
-  <script src="js/products.js?v=8"></script>
-  <script src="js/app.js?v=8"></script>
+  <script src="js/products.js?v=9"></script>
+  <script src="js/app.js?v=9"></script>
 </body>
 </html>

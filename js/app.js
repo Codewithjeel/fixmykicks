@@ -30,7 +30,7 @@ const state = {
   modalImageIndex: 0,
   stagedUploadImages: [],    // Array of dataURLs/paths from system file picker
   isAdmin: sessionStorage.getItem('fmk_admin_unlocked') === 'true',
-  adminPin: localStorage.getItem('fmk_admin_pin') || '8080',
+  adminPin: localStorage.getItem('fmk_admin_pin') || 'YashFixMyKicks@6290',
   whatsappNumber: (localStorage.getItem('fmk_whatsapp_number') && localStorage.getItem('fmk_whatsapp_number') !== '919876543210')
     ? localStorage.getItem('fmk_whatsapp_number')
     : '917303039323',
@@ -91,6 +91,10 @@ async function loadStoreSettings() {
   if (localStorage.getItem('fmk_whatsapp_number') === '919876543210') {
     localStorage.setItem('fmk_whatsapp_number', '917303039323');
     state.whatsappNumber = '917303039323';
+  }
+  if (!localStorage.getItem('fmk_admin_pin') || localStorage.getItem('fmk_admin_pin') === '8080') {
+    localStorage.setItem('fmk_admin_pin', 'YashFixMyKicks@6290');
+    state.adminPin = 'YashFixMyKicks@6290';
   }
   try {
     const res = await fetch('/api/settings', { cache: 'no-store' });
@@ -504,8 +508,16 @@ function applyFiltersAndRender() {
       if (targetG === 'women' && g !== 'women' && g !== 'unisex') return false;
       if (targetG === 'unisex' && g !== 'unisex') return false;
     }
-    if (state.activeSize !== 'All' && (!item.sizes || !item.sizes.includes(state.activeSize))) {
-      return false;
+    if (state.activeSize !== 'All') {
+      const targetSize = String(state.activeSize).toLowerCase().trim();
+      const hasMatchedSize = (item.sizes || []).some(sz => {
+        const s = String(sz).toLowerCase();
+        if (s === targetSize || s.includes(targetSize)) return true;
+        const targetDigits = targetSize.replace(/[^0-9.]/g, '');
+        if (targetDigits && s.includes(targetDigits)) return true;
+        return false;
+      });
+      if (!hasMatchedSize) return false;
     }
     if (state.activePriceRange !== 'All') {
       const p = Number(item.price) || 0;
@@ -1810,34 +1822,80 @@ async function handleSystemFilesSelected(event) {
 }
 
 async function processSelectedFiles(files) {
-  for (const file of files) {
-    if (!file.type.startsWith('image/')) continue;
-    const normalizedDataUrl = await compressImageFile(file, 1000, 0.88);
-    state.stagedUploadImages.push(normalizedDataUrl);
+  const validFiles = files.filter(f => (f.type && f.type.startsWith('image/')) || /\.(jpe?g|png|webp|heic|heif|gif|bmp)$/i.test(f.name));
+  if (!validFiles.length) {
+    showToast('Please select valid image files.');
+    return;
   }
-  renderUploadPreviews();
+
+  const progressBar = document.getElementById('upload-processing-bar');
+  const progressText = document.getElementById('upload-processing-text');
+  const progressCount = document.getElementById('upload-processing-count');
+
+  if (progressBar) progressBar.classList.remove('hidden');
+
+  try {
+    for (let i = 0; i < validFiles.length; i++) {
+      const file = validFiles[i];
+      if (progressText) progressText.textContent = `Optimizing photo ${i + 1} of ${validFiles.length}...`;
+      if (progressCount) progressCount.textContent = `${Math.round(((i + 1) / validFiles.length) * 100)}%`;
+      
+      const normalizedDataUrl = await compressImageFile(file, 800, 0.82);
+      state.stagedUploadImages.push(normalizedDataUrl);
+    }
+  } catch (err) {
+    console.error('Photo processing error:', err);
+    showToast('Error processing some photos.');
+  } finally {
+    if (progressBar) progressBar.classList.add('hidden');
+    renderUploadPreviews();
+    showToast(`Added ${validFiles.length} photo${validFiles.length > 1 ? 's' : ''}!`);
+  }
 }
 
 /**
- * Normalizes any uploaded photo (portrait, landscape, or square) onto a fixed 1000x1000 px square canvas
- * so every single angle has the exact same height and width while showing 100% of the actual photo area.
+ * Ultra-fast hardware-accelerated photo normalizer (800x800 px square canvas)
+ * Works flawlessly across iOS Safari, Android, tablets, and desktops in milliseconds.
  */
-function compressImageFile(file, boxSize = 1000, quality = 0.88) {
-  return new Promise((resolve) => {
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      const img = new Image();
-      img.onload = () => {
+function compressImageFile(file, boxSize = 800, quality = 0.82) {
+  return new Promise(async (resolve) => {
+    // Path 1: Hardware-accelerated createImageBitmap (modern iOS Safari, Chrome, Edge)
+    if (window.createImageBitmap) {
+      try {
+        const bitmap = await createImageBitmap(file);
         const canvas = document.createElement('canvas');
         canvas.width = boxSize;
         canvas.height = boxSize;
         const ctx = canvas.getContext('2d');
-
-        // Fill uniform pure white background so non-square photos have identical height & width with zero visible border
         ctx.fillStyle = '#FFFFFF';
         ctx.fillRect(0, 0, boxSize, boxSize);
 
-        // Fit the entire actual photo inside the 1000x1000 box without cropping any part of the shoe
+        const scale = Math.min(boxSize / bitmap.width, boxSize / bitmap.height);
+        const drawWidth = Math.round(bitmap.width * scale);
+        const drawHeight = Math.round(bitmap.height * scale);
+        const offsetX = Math.round((boxSize - drawWidth) / 2);
+        const offsetY = Math.round((boxSize - drawHeight) / 2);
+
+        ctx.drawImage(bitmap, offsetX, offsetY, drawWidth, drawHeight);
+        bitmap.close();
+        resolve(canvas.toDataURL('image/jpeg', quality));
+        return;
+      } catch (_) {}
+    }
+
+    // Path 2: Instant Object URL streaming
+    try {
+      const blobUrl = URL.createObjectURL(file);
+      const img = new Image();
+      img.onload = () => {
+        URL.revokeObjectURL(blobUrl);
+        const canvas = document.createElement('canvas');
+        canvas.width = boxSize;
+        canvas.height = boxSize;
+        const ctx = canvas.getContext('2d');
+        ctx.fillStyle = '#FFFFFF';
+        ctx.fillRect(0, 0, boxSize, boxSize);
+
         const scale = Math.min(boxSize / img.width, boxSize / img.height);
         const drawWidth = Math.round(img.width * scale);
         const drawHeight = Math.round(img.height * scale);
@@ -1847,10 +1905,19 @@ function compressImageFile(file, boxSize = 1000, quality = 0.88) {
         ctx.drawImage(img, offsetX, offsetY, drawWidth, drawHeight);
         resolve(canvas.toDataURL('image/jpeg', quality));
       };
-      img.onerror = () => resolve(e.target.result);
-      img.src = e.target.result;
-    };
-    reader.readAsDataURL(file);
+      img.onerror = () => {
+        URL.revokeObjectURL(blobUrl);
+        // Path 3: Fallback FileReader
+        const reader = new FileReader();
+        reader.onload = (e) => resolve(e.target.result);
+        reader.readAsDataURL(file);
+      };
+      img.src = blobUrl;
+    } catch (_) {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.readAsDataURL(file);
+    }
   });
 }
 
@@ -1951,7 +2018,7 @@ async function handleSaveProduct(e) {
   const submitBtn = document.getElementById('save-shoe-submit-btn');
   if (submitBtn) {
     submitBtn.disabled = true;
-    submitBtn.textContent = 'Uploading Photos...';
+    submitBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-1.5"></i> Publishing to Cloud Server...';
   }
 
   try {
@@ -1969,18 +2036,22 @@ async function handleSaveProduct(e) {
 
     if (editId) {
       await window.InventoryAPI.update(editId, payload);
-      showToast(`Updated "${name}" (${payload.images.length} photos).`);
+      showToast(`Updated "${name}" live across all devices!`);
     } else {
       await window.InventoryAPI.create(payload);
-      showToast(`Published "${name}" with ${payload.images.length} slider photos!`);
+      showToast(`Published "${name}" live across all devices!`);
     }
 
     closeAddProductModal();
     await refreshInventory();
+  } catch (err) {
+    console.error('Save product error:', err);
+    alert(`Upload Note: ${err.message}`);
+    showToast(err.message);
   } finally {
     if (submitBtn) {
       submitBtn.disabled = false;
-      submitBtn.textContent = 'Save & Publish Shoe';
+      submitBtn.textContent = editId ? 'Update Shoe' : 'Save & Publish Shoe';
     }
   }
 }

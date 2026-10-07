@@ -59,7 +59,7 @@ if (!fs.existsSync(SETTINGS_FILE)) {
     instagramUrl: 'https://www.instagram.com/fixmykickss.in',
     telegramUrl: 'https://t.me/yashaswani77',
     storeAddress: 'Karol Bagh, New Delhi - 110005',
-    adminPin: '8080'
+    adminPin: 'YashFixMyKicks@6290'
   }, null, 2), 'utf8');
 }
 
@@ -105,7 +105,7 @@ function readSettings() {
       instagramUrl: 'https://www.instagram.com/fixmykickss.in',
       telegramUrl: 'https://t.me/yashaswani77',
       storeAddress: 'Karol Bagh, New Delhi - 110005',
-      adminPin: '8080'
+      adminPin: 'YashFixMyKicks@6290'
     };
   }
 }
@@ -324,7 +324,7 @@ const server = http.createServer(async (req, res) => {
       const payload = await parseJsonBody(req);
       const settings = readSettings();
       const enteredPin = String(payload.pin || '').trim();
-      const actualPin = String(settings.adminPin || '8080').trim();
+      const actualPin = String(settings.adminPin || 'YashFixMyKicks@6290').trim();
 
       if (enteredPin && enteredPin === actualPin) {
         res.writeHead(200, { 'Content-Type': 'application/json' });

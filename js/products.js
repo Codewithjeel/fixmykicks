@@ -26,14 +26,16 @@ const STORE_CATEGORIES = [
 ];
 
 const STANDARD_SIZES = [
-  { uk: "UK 5", eu: "EU 38", cm: "23.5 cm" },
-  { uk: "UK 6", eu: "EU 40", cm: "24.5 cm" },
-  { uk: "UK 7", eu: "EU 41", cm: "25.5 cm" },
+  { uk: "UK 3.5", eu: "EU 36", cm: "22.5 cm" },
+  { uk: "UK 4", eu: "EU 37", cm: "23.5 cm" },
+  { uk: "UK 5", eu: "EU 38", cm: "24.0 cm" },
+  { uk: "UK 5.5", eu: "EU 39", cm: "24.5 cm" },
+  { uk: "UK 6", eu: "EU 40", cm: "25.0 cm" },
+  { uk: "UK 7", eu: "EU 41", cm: "26.0 cm" },
   { uk: "UK 8", eu: "EU 42", cm: "26.5 cm" },
   { uk: "UK 9", eu: "EU 43", cm: "27.5 cm" },
   { uk: "UK 10", eu: "EU 44", cm: "28.5 cm" },
-  { uk: "UK 11", eu: "EU 45", cm: "29.5 cm" },
-  { uk: "UK 12", eu: "EU 46", cm: "30.5 cm" }
+  { uk: "UK 11", eu: "EU 45", cm: "29.5 cm" }
 ];
 
 /**
@@ -244,6 +246,9 @@ const InventoryAPI = {
       createdAt: new Date().toISOString()
     };
 
+    let serverSaved = false;
+    let saved = newProduct;
+
     try {
       const res = await fetch('/api/products', {
         method: 'POST',
@@ -251,17 +256,28 @@ const InventoryAPI = {
         body: JSON.stringify(newProduct)
       });
       if (res.ok) {
-        const saved = await res.json();
-        await idbSave(saved);
-        return saved;
+        saved = await res.json();
+        serverSaved = true;
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || `Server returned HTTP ${res.status}`);
       }
-    } catch (_) {}
+    } catch (err) {
+      console.warn('Server create warning:', err);
+      await idbSave(newProduct);
+      if (!serverSaved && window.location.protocol.startsWith('http')) {
+        throw new Error(`Cloud server save failed: ${err.message}`);
+      }
+    }
 
-    await idbSave(newProduct);
-    return newProduct;
+    await idbSave(saved);
+    return saved;
   },
 
   async update(id, productData) {
+    let serverUpdated = false;
+    let updated = { ...productData, id };
+
     try {
       const res = await fetch(`/api/products/${encodeURIComponent(id)}`, {
         method: 'PUT',
@@ -269,15 +285,22 @@ const InventoryAPI = {
         body: JSON.stringify(productData)
       });
       if (res.ok) {
-        const updated = await res.json();
-        await idbSave(updated);
-        return updated;
+        updated = await res.json();
+        serverUpdated = true;
+      } else {
+        const errJson = await res.json().catch(() => ({}));
+        throw new Error(errJson.error || `Server returned HTTP ${res.status}`);
       }
-    } catch (_) {}
+    } catch (err) {
+      console.warn('Server update warning:', err);
+      await idbSave(updated);
+      if (!serverUpdated && window.location.protocol.startsWith('http')) {
+        throw new Error(`Cloud server update failed: ${err.message}`);
+      }
+    }
 
-    const updatedProduct = { ...productData, id };
-    await idbSave(updatedProduct);
-    return updatedProduct;
+    await idbSave(updated);
+    return updated;
   },
 
   async remove(id) {
