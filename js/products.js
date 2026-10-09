@@ -12,7 +12,8 @@ const DEFAULT_STORE_BRANDS = [
   "New Balance",
   "Birkenstock",
   "Crocs",
-  "Puma"
+  "Puma",
+  "Onitsuka Tiger"
 ];
 
 const STORE_CATEGORIES = [
@@ -177,55 +178,82 @@ const InventoryAPI = {
     let serverItems = [];
     let apiAvailable = false;
 
+    // 1. Try server API
     try {
       const res = await fetch('/api/products', { cache: 'no-store' });
       if (res.ok) {
         const data = await res.json();
-        if (Array.isArray(data)) {
+        if (Array.isArray(data) && data.length > 0) {
           serverItems = data;
           apiAvailable = true;
         }
       }
     } catch (_) {}
 
-    if (!apiAvailable) {
+    // 2. Fallback to static products.json
+    if (!apiAvailable || serverItems.length === 0) {
       try {
         const staticRes = await fetch('data/products.json', { cache: 'no-store' });
         if (staticRes.ok) {
           const staticData = await staticRes.json();
-          if (Array.isArray(staticData)) {
+          if (Array.isArray(staticData) && staticData.length > 0) {
             serverItems = staticData;
+            apiAvailable = true;
           }
         }
       } catch (_) {}
     }
 
-    if (apiAvailable) {
-      try {
-        const localItems = await idbGetAll();
-        const serverIds = new Set(serverItems.map(s => s && s.id).filter(Boolean));
-        // Remove locally cached items that were removed from server
-        for (const localItem of localItems) {
-          if (localItem && localItem.id && !serverIds.has(localItem.id)) {
-            await idbDelete(localItem.id);
-          }
-        }
-        // Cache server items in IndexedDB for offline resilience
-        for (const item of serverItems) {
-          if (item && item.id) {
-            await idbSave(item);
-          }
-        }
-      } catch (_) {}
-
-      serverItems.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-      return serverItems;
+    // 3. Fallback to pre-bundled window.INITIAL_CATALOG if server is asleep or slow
+    if ((!apiAvailable || serverItems.length === 0) && Array.isArray(window.INITIAL_CATALOG) && window.INITIAL_CATALOG.length > 0) {
+      serverItems = window.INITIAL_CATALOG.map(x => ({ ...x }));
+      apiAvailable = true;
     }
 
-    // Offline fallback when server cannot be reached
+    // Load deliberate deletion IDs so we never resurrect intentionally deleted shoes
+    const deletedIds = new Set(JSON.parse(localStorage.getItem('fmk_deleted_shoe_ids') || '[]'));
+
+    // 4. Retrieve local items from this device's IndexedDB
     const localItems = await idbGetAll();
-    localItems.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    return localItems;
+    const catalogMap = new Map();
+
+    serverItems.forEach(item => {
+      if (item && item.id && !deletedIds.has(item.id)) {
+        catalogMap.set(item.id, item);
+      }
+    });
+
+    // SELF-HEALING SYNC:
+    // If a shoe was added by user on this device, but the cloud server reset/restarted and doesn't have it,
+    // NEVER DELETE IT! Restore it and auto-reupload to the cloud server!
+    for (const localItem of localItems) {
+      if (localItem && localItem.id) {
+        if (deletedIds.has(localItem.id)) {
+          // Deliberately deleted by admin: remove from local cache
+          await idbDelete(localItem.id).catch(() => {});
+        } else if (!catalogMap.has(localItem.id)) {
+          // Missing on server (e.g. server restart) — restore it!
+          catalogMap.set(localItem.id, localItem);
+          if (window.location.protocol.startsWith('http')) {
+            fetch('/api/products', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify(localItem)
+            }).catch(() => {});
+          }
+        }
+      }
+    }
+
+    const merged = Array.from(catalogMap.values());
+
+    // Update local IndexedDB with merged catalog so it's 100% resilient offline
+    for (const item of merged) {
+      try { await idbSave(item); } catch (_) {}
+    }
+
+    merged.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    return merged;
   },
 
   async create(productData) {
@@ -246,6 +274,13 @@ const InventoryAPI = {
       inStock: productData.inStock !== false,
       createdAt: new Date().toISOString()
     };
+
+    // Ensure this new ID is cleared from any deleted list
+    const deletedIds = new Set(JSON.parse(localStorage.getItem('fmk_deleted_shoe_ids') || '[]'));
+    if (deletedIds.has(newProduct.id)) {
+      deletedIds.delete(newProduct.id);
+      localStorage.setItem('fmk_deleted_shoe_ids', JSON.stringify([...deletedIds]));
+    }
 
     let serverSaved = false;
     let saved = newProduct;
@@ -305,6 +340,11 @@ const InventoryAPI = {
   },
 
   async remove(id) {
+    // Record in deleted list so self-healing sync never resurrects it
+    const deletedIds = new Set(JSON.parse(localStorage.getItem('fmk_deleted_shoe_ids') || '[]'));
+    deletedIds.add(id);
+    localStorage.setItem('fmk_deleted_shoe_ids', JSON.stringify([...deletedIds]));
+
     try {
       await fetch(`/api/products/${encodeURIComponent(id)}`, { method: 'DELETE' });
     } catch (_) {}

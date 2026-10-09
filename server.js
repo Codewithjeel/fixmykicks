@@ -5,6 +5,7 @@
  */
 
 const http = require('http');
+const https = require('https');
 const fs = require('fs');
 const path = require('path');
 
@@ -23,7 +24,8 @@ const DEFAULT_BRANDS = [
   'New Balance',
   'Birkenstock',
   'Crocs',
-  'Puma'
+  'Puma',
+  'Onitsuka Tiger'
 ];
 
 // Ensure directories exist
@@ -93,6 +95,106 @@ function readProducts() {
 
 function writeProducts(products) {
   fs.writeFileSync(PRODUCTS_FILE, JSON.stringify(products, null, 2), 'utf8');
+  try {
+    const fallbackPath = path.join(DATA_DIR, 'catalog-fallback.js');
+    fs.writeFileSync(fallbackPath, 'window.INITIAL_CATALOG = ' + JSON.stringify(products, null, 2) + ';\n', 'utf8');
+  } catch (_) {}
+  scheduleGitHubSync(products);
+}
+
+// GitHub Auto-Commit & Cloud Persistence
+const GITHUB_REPO = process.env.GITHUB_REPO || 'Codewithjeel/fixmykicks';
+const GITHUB_BRANCH = process.env.GITHUB_BRANCH || 'main';
+
+function getGitHubToken() {
+  const settings = readSettings();
+  return (process.env.GITHUB_TOKEN || settings.githubToken || '').trim();
+}
+
+let _gitSyncTimer = null;
+function scheduleGitHubSync(products) {
+  const token = getGitHubToken();
+  if (!token) return;
+  if (_gitSyncTimer) clearTimeout(_gitSyncTimer);
+  _gitSyncTimer = setTimeout(() => {
+    syncCatalogToGitHub().catch(err => console.error('[GitSync Error]', err.message));
+  }, 4000);
+}
+
+async function syncCatalogToGitHub() {
+  const token = getGitHubToken();
+  if (!token) return { success: false, reason: 'No GitHub token configured.' };
+  if (!fs.existsSync(PRODUCTS_FILE)) return { success: false, reason: 'products.json not found' };
+
+  const content = fs.readFileSync(PRODUCTS_FILE, 'utf8');
+  const pathInRepo = 'data/products.json';
+  const base64Content = Buffer.from(content, 'utf8').toString('base64');
+
+  const getSha = () => new Promise((resolve) => {
+    const req = https.request({
+      hostname: 'api.github.com',
+      path: `/repos/${GITHUB_REPO}/contents/${pathInRepo}?ref=${GITHUB_BRANCH}`,
+      method: 'GET',
+      headers: {
+        'User-Agent': 'FixMyKicks-Server',
+        'Authorization': `token ${token}`,
+        'Accept': 'application/vnd.github.v3+json'
+      }
+    }, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        try {
+          const json = JSON.parse(data);
+          resolve(json.sha || null);
+        } catch (_) { resolve(null); }
+      });
+    });
+    req.on('error', () => resolve(null));
+    req.end();
+  });
+
+  const sha = await getSha();
+
+  return new Promise((resolve) => {
+    const payload = JSON.stringify({
+      message: `Auto-sync sneaker catalog [${new Date().toISOString()}]`,
+      content: base64Content,
+      branch: GITHUB_BRANCH,
+      ...(sha ? { sha } : {})
+    });
+
+    const req = https.request({
+      hostname: 'api.github.com',
+      path: `/repos/${GITHUB_REPO}/contents/${pathInRepo}`,
+      method: 'PUT',
+      headers: {
+        'User-Agent': 'FixMyKicks-Server',
+        'Authorization': `token ${token}`,
+        'Content-Type': 'application/json',
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Length': Buffer.byteLength(payload)
+      }
+    }, res => {
+      let data = '';
+      res.on('data', c => data += c);
+      res.on('end', () => {
+        if (res.statusCode >= 200 && res.statusCode < 300) {
+          console.log('[GitSync Success] Catalog committed to GitHub permanently!');
+          resolve({ success: true });
+        } else {
+          console.error('[GitSync Failed]', res.statusCode, data);
+          resolve({ success: false, status: res.statusCode, error: data });
+        }
+      });
+    });
+    req.on('error', err => {
+      console.error('[GitSync Network Error]', err.message);
+      resolve({ success: false, error: err.message });
+    });
+    req.write(payload);
+    req.end();
+  });
 }
 
 function readSettings() {

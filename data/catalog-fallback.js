@@ -1,4 +1,4 @@
-[
+window.INITIAL_CATALOG = [
   {
     "id": "MK-AD-1000",
     "name": "Adidas Adizero Black",
@@ -3242,4 +3242,4 @@
     "inStock": true,
     "createdAt": "2026-10-01T08:07:25.896Z"
   }
-]
+];
