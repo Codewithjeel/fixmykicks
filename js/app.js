@@ -597,11 +597,12 @@ function applyFiltersAndRender() {
       return false;
     }
     if (state.activeGender !== 'All') {
-      const g = (item.gender || 'Unisex').toLowerCase();
+      const g = (item.gender || 'Men').toLowerCase();
       const targetG = state.activeGender.toLowerCase();
-      if (targetG === 'men' && g !== 'men' && g !== 'unisex') return false;
-      if (targetG === 'women' && g !== 'women' && g !== 'unisex') return false;
-      if (targetG === 'unisex' && g !== 'unisex') return false;
+      const isGirls = item.girls_collection === 1 || item.girls_collection === true || g === 'women';
+      if (targetG === 'men' && isGirls) return false;
+      if (targetG === 'women' && !isGirls) return false;
+      if (targetG === 'unisex' && !['unisex', 'all'].includes(g)) return false;
     }
     if (state.activeSize !== 'All') {
       const targetSize = String(state.activeSize).toLowerCase().trim();
@@ -1862,14 +1863,31 @@ function openEditProductModal(event, productId) {
   document.getElementById('new-shoe-brand').value = shoe.brand || state.brands[0] || 'Nike';
   document.getElementById('new-shoe-category').value = shoe.category || 'Sneakers';
   const editGenderEl = document.getElementById('new-shoe-gender');
-  if (editGenderEl) editGenderEl.value = shoe.gender || 'Unisex';
+  if (editGenderEl) editGenderEl.value = shoe.gender || (shoe.girls_collection ? 'Women' : 'Men');
   document.getElementById('new-shoe-price').value = shoe.price || '';
   document.getElementById('new-shoe-mrp').value = shoe.mrp || '';
   document.getElementById('new-shoe-desc').value = shoe.description || '';
 
   const checkboxes = document.querySelectorAll('#admin-sizes-checkboxes input[name="shoe_size"]');
   checkboxes.forEach(cb => {
-    cb.checked = shoe.sizes ? shoe.sizes.includes(cb.value) : false;
+    const val = cb.value.trim().toLowerCase();
+    const ukMatch = val.match(/uk\s*([0-9.]+)/i);
+    const euMatch = val.match(/eu\s*([0-9.]+)/i);
+    const ukNum = ukMatch ? ukMatch[1] : '';
+    const euNum = euMatch ? euMatch[1] : '';
+
+    const isMatch = (shoe.sizes || []).some(sz => {
+      const s = String(sz).trim().toLowerCase();
+      if (s === val) return true;
+      if (ukNum && (s === `uk ${ukNum}` || s === `uk${ukNum}` || s.includes(`uk ${ukNum}`))) return true;
+      if (euNum && (s === `eu ${euNum}` || s === `eu${euNum}` || s.includes(`eu ${euNum}`) || s.includes(`(${euNum})`))) return true;
+      const digits = s.replace(/[^0-9.]/g, '');
+      if (ukNum && digits === ukNum) return true;
+      if (euNum && digits === euNum) return true;
+      return false;
+    });
+
+    cb.checked = isMatch;
   });
 
   state.stagedUploadImages = Array.isArray(shoe.images) ? [...shoe.images] : [];
@@ -2071,6 +2089,24 @@ function removeStagedPhoto(idx) {
 function clearSelectedUploadPhotos() {
   state.stagedUploadImages = [];
   renderUploadPreviews();
+}
+
+function setAdminSizePreset(type) {
+  const checkboxes = document.querySelectorAll('#admin-sizes-checkboxes input[name="shoe_size"]');
+  checkboxes.forEach(cb => {
+    const val = cb.value.toLowerCase();
+    const euMatch = (val.match(/eu\s*([0-9.]+)/) || [])[1] || '';
+    const euNum = Number(euMatch) || 0;
+    if (type === 'men') {
+      cb.checked = euNum >= 41 && euNum <= 45;
+    } else if (type === 'women') {
+      cb.checked = euNum >= 36 && euNum <= 41;
+    } else if (type === 'all') {
+      cb.checked = true;
+    } else if (type === 'none') {
+      cb.checked = false;
+    }
+  });
 }
 
 function toggleAllAdminSizes() {
