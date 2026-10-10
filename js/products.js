@@ -39,6 +39,15 @@ const STANDARD_SIZES = [
   { uk: "UK 11", eu: "EU 45", cm: "29.5 cm" }
 ];
 
+function getAdminHeaders() {
+  const headers = { 'Content-Type': 'application/json' };
+  const token = sessionStorage.getItem('fmk_admin_token');
+  if (token) {
+    headers['Authorization'] = `Bearer ${token}`;
+  }
+  return headers;
+}
+
 /**
  * Dynamic Brands API (Server + LocalStorage Sync)
  */
@@ -71,7 +80,7 @@ const BrandsAPI = {
     try {
       const res = await fetch('/api/brands', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders(),
         body: JSON.stringify({ name: clean })
       });
       if (res.ok) {
@@ -92,7 +101,10 @@ const BrandsAPI = {
   async remove(brandName) {
     const clean = (brandName || '').trim();
     try {
-      const res = await fetch(`/api/brands/${encodeURIComponent(clean)}`, { method: 'DELETE' });
+      const res = await fetch(`/api/brands/${encodeURIComponent(clean)}`, {
+        method: 'DELETE',
+        headers: getAdminHeaders()
+      });
       if (res.ok) {
         const updated = await res.json();
         localStorage.setItem('fmk_brands', JSON.stringify(updated));
@@ -288,7 +300,7 @@ const InventoryAPI = {
     try {
       const res = await fetch('/api/products', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders(),
         body: JSON.stringify(newProduct)
       });
       if (res.ok) {
@@ -317,7 +329,7 @@ const InventoryAPI = {
     try {
       const res = await fetch(`/api/products/${encodeURIComponent(id)}`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAdminHeaders(),
         body: JSON.stringify(productData)
       });
       if (res.ok) {
@@ -346,7 +358,10 @@ const InventoryAPI = {
     localStorage.setItem('fmk_deleted_shoe_ids', JSON.stringify([...deletedIds]));
 
     try {
-      await fetch(`/api/products/${encodeURIComponent(id)}`, { method: 'DELETE' });
+      await fetch(`/api/products/${encodeURIComponent(id)}`, {
+        method: 'DELETE',
+        headers: getAdminHeaders()
+      });
     } catch (_) {}
     await idbDelete(id);
     return true;

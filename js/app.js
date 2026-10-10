@@ -29,8 +29,7 @@ const state = {
   modalProduct: null,
   modalImageIndex: 0,
   stagedUploadImages: [],    // Array of dataURLs/paths from system file picker
-  isAdmin: sessionStorage.getItem('fmk_admin_unlocked') === 'true',
-  adminPin: localStorage.getItem('fmk_admin_pin') || 'YashFixMyKicks@6290',
+  isAdmin: sessionStorage.getItem('fmk_admin_unlocked') === 'true' && !!sessionStorage.getItem('fmk_admin_token'),
   whatsappNumber: (localStorage.getItem('fmk_whatsapp_number') && localStorage.getItem('fmk_whatsapp_number') !== '919876543210')
     ? localStorage.getItem('fmk_whatsapp_number')
     : '917303039323',
@@ -93,10 +92,9 @@ async function loadStoreSettings() {
     localStorage.setItem('fmk_whatsapp_number', '917303039323');
     state.whatsappNumber = '917303039323';
   }
-  if (!localStorage.getItem('fmk_admin_pin') || localStorage.getItem('fmk_admin_pin') === '8080') {
-    localStorage.setItem('fmk_admin_pin', 'YashFixMyKicks@6290');
-    state.adminPin = 'YashFixMyKicks@6290';
-  }
+  // SECURITY: Permanently purge any stored admin PIN from browser storage
+  localStorage.removeItem('fmk_admin_pin');
+
   try {
     const res = await fetch('/api/settings', { cache: 'no-store' });
     if (res.ok) {
@@ -117,10 +115,6 @@ async function loadStoreSettings() {
       if (data.storeAddress) {
         state.storeAddress = data.storeAddress;
         localStorage.setItem('fmk_store_address', data.storeAddress);
-      }
-      if (data.adminPin) {
-        state.adminPin = data.adminPin;
-        localStorage.setItem('fmk_admin_pin', data.adminPin);
       }
     }
   } catch (_) {}
@@ -1751,56 +1745,54 @@ async function handleAdminLogin(e) {
   const pinInput = document.getElementById('admin-pin-input');
   const err = document.getElementById('admin-login-error');
   const entered = (pinInput ? pinInput.value : '').trim();
+  if (!entered) return;
 
-  // 1. Authenticate against server endpoint (checks settings.json directly on cloud server)
   try {
     const res = await fetch('/api/admin/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ pin: entered })
     });
-    if (res.ok) {
+    const data = await res.json().catch(() => ({}));
+
+    if (res.ok && data.token) {
       state.isAdmin = true;
-      state.adminPin = entered;
-      localStorage.setItem('fmk_admin_pin', entered);
+      sessionStorage.setItem('fmk_admin_token', data.token);
       sessionStorage.setItem('fmk_admin_unlocked', 'true');
+      localStorage.removeItem('fmk_admin_pin');
       closeAdminLoginModal();
       updateAdminUI();
       renderBrandsUI();
       renderProductGrid();
-      showToast('Admin Mode unlocked.');
+      showToast('Admin Mode unlocked securely.');
       return;
     } else {
-      // Server rejected the PIN!
       if (err) {
         err.classList.remove('hidden');
-        err.textContent = 'Incorrect Admin PIN.';
+        err.textContent = data.error || 'Incorrect Admin PIN.';
       }
       return;
     }
-  } catch (_) {}
-
-  // 2. Fallback only if offline / static server
-  if (entered && entered === state.adminPin) {
-    state.isAdmin = true;
-    sessionStorage.setItem('fmk_admin_unlocked', 'true');
-    closeAdminLoginModal();
-    updateAdminUI();
-    renderBrandsUI();
-    renderProductGrid();
-    showToast('Admin Mode unlocked.');
-    return;
-  }
-
-  if (err) {
-    err.classList.remove('hidden');
-    err.textContent = 'Incorrect Admin PIN.';
+  } catch (_) {
+    if (err) {
+      err.classList.remove('hidden');
+      err.textContent = 'Server connection error. Please try again.';
+    }
   }
 }
 
 function logoutAdmin() {
+  const token = sessionStorage.getItem('fmk_admin_token');
+  if (token) {
+    fetch('/api/admin/logout', {
+      method: 'POST',
+      headers: { 'Authorization': `Bearer ${token}` }
+    }).catch(() => {});
+  }
   state.isAdmin = false;
   sessionStorage.removeItem('fmk_admin_unlocked');
+  sessionStorage.removeItem('fmk_admin_token');
+  localStorage.removeItem('fmk_admin_pin');
   updateAdminUI();
   renderBrandsUI();
   renderProductGrid();
@@ -2225,9 +2217,12 @@ function openSettingsModal() {
   const waInput = document.getElementById('setting-whatsapp-num');
   const addrInput = document.getElementById('setting-store-address');
   const pinInput = document.getElementById('setting-admin-pin');
-  if (waInput) waInput.value = state.whatsappNumber;
-  if (addrInput) addrInput.value = state.storeAddress;
-  if (pinInput) pinInput.value = state.adminPin;
+  if (waInput) waInput.value = state.whatsappNumber || '';
+  if (addrInput) addrInput.value = state.storeAddress || '';
+  if (pinInput) {
+    pinInput.value = '';
+    pinInput.placeholder = 'Leave blank to keep current PIN';
+  }
 
   const modal = document.getElementById('settings-modal');
   if (modal) modal.classList.remove('hidden');
@@ -2239,6 +2234,13 @@ function closeSettingsModal() {
 }
 
 async function saveStoreSettings() {
+  const token = sessionStorage.getItem('fmk_admin_token');
+  if (!token) {
+    showToast('Admin session expired. Please log in again.');
+    openAdminPortal();
+    return;
+  }
+
   const waInput = document.getElementById('setting-whatsapp-num');
   const addrInput = document.getElementById('setting-store-address');
   const pinInput = document.getElementById('setting-admin-pin');
@@ -2255,32 +2257,43 @@ async function saveStoreSettings() {
 
   const newPin = pinInput ? pinInput.value.trim() : '';
   if (newPin) {
-    state.adminPin = newPin;
-    localStorage.setItem('fmk_admin_pin', newPin);
     try {
-      await fetch('/api/admin/change-pin', {
+      const pinRes = await fetch('/api/admin/change-pin', {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
         body: JSON.stringify({ newPin })
       });
-    } catch (_) {}
+      const pinJson = await pinRes.json().catch(() => ({}));
+      if (!pinRes.ok) {
+        showToast(pinJson.error || 'Failed to update Admin PIN.');
+        return;
+      }
+    } catch (_) {
+      showToast('Error communicating with server to update PIN.');
+      return;
+    }
   }
 
   try {
     await fetch('/api/settings', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      },
       body: JSON.stringify({
         whatsappNumber: state.whatsappNumber,
-        storeAddress: state.storeAddress,
-        adminPin: state.adminPin
+        storeAddress: state.storeAddress
       })
     });
   } catch (_) {}
 
   updateStoreSettingsUI();
   closeSettingsModal();
-  showToast('Store settings & Admin PIN saved.');
+  showToast(newPin ? 'Store settings & Admin PIN updated.' : 'Store settings updated.');
 }
 
 function updateStoreSettingsUI() {

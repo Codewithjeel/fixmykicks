@@ -6,6 +6,7 @@
 
 const http = require('http');
 const https = require('https');
+const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
 
@@ -27,6 +28,77 @@ const DEFAULT_BRANDS = [
   'Puma',
   'Onitsuka Tiger'
 ];
+
+// --- HARDENED ADMIN SECURITY & AUTHENTICATION ENGINE ---
+const activeAdminTokens = new Map(); // token -> { createdAt, expiresAt }
+const loginRateLimit = new Map();     // ip -> { count, lockedUntil }
+
+function getClientIp(req) {
+  const forwarded = req.headers['x-forwarded-for'];
+  if (forwarded) return forwarded.split(',')[0].trim();
+  return (req.socket && req.socket.remoteAddress) || '127.0.0.1';
+}
+
+function checkRateLimit(ip) {
+  const record = loginRateLimit.get(ip);
+  if (!record) return { allowed: true };
+  if (record.lockedUntil && Date.now() < record.lockedUntil) {
+    const remainingMins = Math.ceil((record.lockedUntil - Date.now()) / 60000);
+    return { allowed: false, remainingMins };
+  }
+  if (record.lockedUntil && Date.now() >= record.lockedUntil) {
+    loginRateLimit.delete(ip);
+    return { allowed: true };
+  }
+  return { allowed: true };
+}
+
+function recordFailedLogin(ip) {
+  const record = loginRateLimit.get(ip) || { count: 0, lockedUntil: null };
+  record.count += 1;
+  if (record.count >= 5) {
+    record.lockedUntil = Date.now() + 15 * 60 * 1000; // 15-minute security lockout
+  }
+  loginRateLimit.set(ip, record);
+  return record;
+}
+
+function resetFailedLogin(ip) {
+  loginRateLimit.delete(ip);
+}
+
+function verifyAdminPin(enteredPin, actualPin) {
+  if (typeof enteredPin !== 'string' || typeof actualPin !== 'string') return false;
+  if (!enteredPin || !actualPin) return false;
+  const hashEntered = crypto.createHash('sha256').update(enteredPin.trim()).digest();
+  const hashActual = crypto.createHash('sha256').update(actualPin.trim()).digest();
+  return crypto.timingSafeEqual(hashEntered, hashActual);
+}
+
+function createAdminSession() {
+  const token = crypto.randomBytes(32).toString('hex');
+  const expiresAt = Date.now() + 24 * 60 * 60 * 1000; // 24-hour validity
+  activeAdminTokens.set(token, { createdAt: Date.now(), expiresAt });
+  return token;
+}
+
+function isValidAdminToken(req) {
+  const authHeader = req.headers['authorization'] || '';
+  const customHeader = req.headers['x-admin-token'] || '';
+  let token = '';
+  if (authHeader.startsWith('Bearer ')) {
+    token = authHeader.slice(7).trim();
+  } else if (customHeader) {
+    token = String(customHeader).trim();
+  }
+  if (!token || !activeAdminTokens.has(token)) return false;
+  const session = activeAdminTokens.get(token);
+  if (Date.now() > session.expiresAt) {
+    activeAdminTokens.delete(token);
+    return false;
+  }
+  return true;
+}
 
 // Ensure directories exist
 if (!fs.existsSync(DATA_DIR)) fs.mkdirSync(DATA_DIR, { recursive: true });
@@ -277,7 +349,7 @@ const server = http.createServer(async (req, res) => {
   // CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, X-Admin-Token');
 
   if (req.method === 'OPTIONS') {
     res.writeHead(204);
@@ -297,6 +369,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname === '/api/products' && req.method === 'POST') {
+    if (!isValidAdminToken(req)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized: Admin authentication required to upload sneakers.' }));
+      return;
+    }
+
     try {
       const payload = await parseJsonBody(req);
       const products = readProducts();
@@ -309,10 +387,10 @@ const server = http.createServer(async (req, res) => {
         name: payload.name,
         brand: payload.brand,
         category: payload.category || 'Sneakers',
-        gender: payload.gender || 'Unisex',
+        gender: payload.gender || 'Men',
         price: Number(payload.price) || 0,
         mrp: Number(payload.mrp) || Number(payload.price) || 0,
-        sizes: Array.isArray(payload.sizes) && payload.sizes.length > 0 ? payload.sizes : ['UK 6', 'UK 7', 'UK 8', 'UK 9', 'UK 10'],
+        sizes: Array.isArray(payload.sizes) && payload.sizes.length > 0 ? payload.sizes : ['UK 7', 'UK 8', 'UK 9', 'UK 10', 'UK 11'],
         images: savedImages,
         edition: payload.edition || 'Master Edition',
         description: payload.description || '',
@@ -338,6 +416,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname.startsWith('/api/products/') && req.method === 'PUT') {
+    if (!isValidAdminToken(req)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized: Admin authentication required to update sneakers.' }));
+      return;
+    }
+
     try {
       const targetId = pathname.replace('/api/products/', '');
       const payload = await parseJsonBody(req);
@@ -357,7 +441,7 @@ const server = http.createServer(async (req, res) => {
         name: payload.name ?? products[idx].name,
         brand: payload.brand ?? products[idx].brand,
         category: payload.category ?? products[idx].category,
-        gender: payload.gender ?? products[idx].gender ?? 'Unisex',
+        gender: payload.gender ?? products[idx].gender ?? 'Men',
         price: payload.price !== undefined ? Number(payload.price) : products[idx].price,
         mrp: payload.mrp !== undefined ? Number(payload.mrp) : products[idx].mrp,
         sizes: payload.sizes ?? products[idx].sizes,
@@ -378,6 +462,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname.startsWith('/api/products/') && req.method === 'DELETE') {
+    if (!isValidAdminToken(req)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized: Admin authentication required to delete sneakers.' }));
+      return;
+    }
+
     const targetId = pathname.replace('/api/products/', '');
     let products = readProducts();
     const target = products.find(p => p.id === targetId);
@@ -399,20 +489,45 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  // --- PUBLIC SETTINGS ENDPOINT (ZERO SENSITIVE PASSWORDS EXPOSED) ---
   if (pathname === '/api/settings' && req.method === 'GET') {
+    const s = readSettings();
     res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(readSettings()));
+    res.end(JSON.stringify({
+      whatsappNumber: s.whatsappNumber || '917303039323',
+      secondaryWhatsappNumber: s.secondaryWhatsappNumber || '916378599513',
+      instagramUrl: s.instagramUrl || 'https://www.instagram.com/fixmykickss.in',
+      telegramUrl: s.telegramUrl || 'https://t.me/yashaswani77',
+      storeAddress: s.storeAddress || 'Karol Bagh, New Delhi - 110005'
+    }));
     return;
   }
 
   if (pathname === '/api/settings' && req.method === 'POST') {
+    if (!isValidAdminToken(req)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized: Admin authentication required to update store settings.' }));
+      return;
+    }
+
     try {
       const payload = await parseJsonBody(req);
       const current = readSettings();
+      // SECURITY: Strip password and system tokens from general settings payload
+      delete payload.adminPin;
+      delete payload.token;
+      delete payload.githubToken;
+
       const updated = { ...current, ...payload };
       writeSettings(updated);
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify(updated));
+      res.end(JSON.stringify({
+        whatsappNumber: updated.whatsappNumber,
+        secondaryWhatsappNumber: updated.secondaryWhatsappNumber,
+        instagramUrl: updated.instagramUrl,
+        telegramUrl: updated.telegramUrl,
+        storeAddress: updated.storeAddress
+      }));
     } catch (err) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: err.message }));
@@ -420,20 +535,40 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // --- DEDICATED ADMIN AUTHENTICATION & PIN MANAGEMENT ---
+  // --- HARDENED ADMIN AUTHENTICATION WITH BRUTE-FORCE RATE LIMITING ---
   if (pathname === '/api/admin/login' && req.method === 'POST') {
+    const ip = getClientIp(req);
+    const rateCheck = checkRateLimit(ip);
+    if (!rateCheck.allowed) {
+      res.writeHead(429, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({
+        success: false,
+        error: `Security lockout: Too many failed login attempts. Try again in ${rateCheck.remainingMins} minute(s).`
+      }));
+      return;
+    }
+
     try {
       const payload = await parseJsonBody(req);
       const settings = readSettings();
       const enteredPin = String(payload.pin || '').trim();
-      const actualPin = String(settings.adminPin || 'YashFixMyKicks@6290').trim();
+      const actualPin = String(process.env.ADMIN_PIN || settings.adminPin || 'YashFixMyKicks@6290').trim();
 
-      if (enteredPin && enteredPin === actualPin) {
+      if (verifyAdminPin(enteredPin, actualPin)) {
+        resetFailedLogin(ip);
+        const token = createAdminSession();
         res.writeHead(200, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: true, message: 'Admin authenticated' }));
+        res.end(JSON.stringify({ success: true, message: 'Admin authenticated securely', token }));
       } else {
+        const attempt = recordFailedLogin(ip);
+        const remaining = Math.max(0, 5 - attempt.count);
         res.writeHead(401, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ success: false, error: 'Incorrect Admin PIN' }));
+        res.end(JSON.stringify({
+          success: false,
+          error: attempt.lockedUntil
+            ? 'Security Alert: Account locked for 15 minutes due to repeated incorrect PIN attempts.'
+            : `Incorrect Admin PIN. ${remaining} attempt(s) remaining before security lockout.`
+        }));
       }
     } catch (err) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
@@ -442,20 +577,37 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
+  if (pathname === '/api/admin/logout' && req.method === 'POST') {
+    const authHeader = req.headers['authorization'] || '';
+    if (authHeader.startsWith('Bearer ')) {
+      const token = authHeader.slice(7).trim();
+      activeAdminTokens.delete(token);
+    }
+    res.writeHead(200, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ success: true, message: 'Logged out successfully' }));
+    return;
+  }
+
   if (pathname === '/api/admin/change-pin' && req.method === 'POST') {
+    if (!isValidAdminToken(req)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized: Admin authentication required to change PIN.' }));
+      return;
+    }
+
     try {
       const payload = await parseJsonBody(req);
       const newPin = String(payload.newPin || '').trim();
-      if (!newPin || newPin.length < 3) {
+      if (!newPin || newPin.length < 4) {
         res.writeHead(400, { 'Content-Type': 'application/json' });
-        res.end(JSON.stringify({ error: 'PIN must be at least 3 characters' }));
+        res.end(JSON.stringify({ error: 'New PIN must be at least 4 characters long.' }));
         return;
       }
       const settings = readSettings();
       settings.adminPin = newPin;
       writeSettings(settings);
       res.writeHead(200, { 'Content-Type': 'application/json' });
-      res.end(JSON.stringify({ success: true, message: 'Admin PIN updated successfully' }));
+      res.end(JSON.stringify({ success: true, message: 'Admin PIN updated successfully.' }));
     } catch (err) {
       res.writeHead(400, { 'Content-Type': 'application/json' });
       res.end(JSON.stringify({ error: err.message }));
@@ -470,6 +622,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname === '/api/brands' && req.method === 'POST') {
+    if (!isValidAdminToken(req)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized: Admin authentication required to add brands.' }));
+      return;
+    }
+
     try {
       const payload = await parseJsonBody(req);
       const brandName = (payload.name || '').trim();
@@ -493,6 +651,12 @@ const server = http.createServer(async (req, res) => {
   }
 
   if (pathname.startsWith('/api/brands/') && req.method === 'DELETE') {
+    if (!isValidAdminToken(req)) {
+      res.writeHead(401, { 'Content-Type': 'application/json' });
+      res.end(JSON.stringify({ error: 'Unauthorized: Admin authentication required to delete brands.' }));
+      return;
+    }
+
     const targetBrand = pathname.replace('/api/brands/', '').trim();
     let brands = readBrands();
     brands = brands.filter(b => b.toLowerCase() !== targetBrand.toLowerCase());
@@ -502,13 +666,29 @@ const server = http.createServer(async (req, res) => {
     return;
   }
 
-  // --- STATIC FILE SERVING ---
+  // --- STATIC FILE SERVING WITH SECURITY FIREWALL ---
   let safePath = pathname === '/' ? '/index.html' : pathname;
+  const lowerPath = safePath.toLowerCase();
+
+  // SECURITY FIREWALL: Block private system files, settings, and credentials from direct download
+  if (
+    lowerPath.includes('settings.json') ||
+    lowerPath.includes('.env') ||
+    lowerPath.includes('server.js') ||
+    lowerPath.includes('package.json') ||
+    lowerPath.includes('..') ||
+    (lowerPath.startsWith('/data/') && !['/data/catalog-fallback.js', '/data/products.json', '/data/brands.json'].includes(lowerPath))
+  ) {
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Access Forbidden: Private system resource' }));
+    return;
+  }
+
   const filePath = path.join(ROOT_DIR, safePath);
 
   if (!filePath.startsWith(ROOT_DIR)) {
-    res.writeHead(403);
-    res.end('Forbidden');
+    res.writeHead(403, { 'Content-Type': 'application/json' });
+    res.end(JSON.stringify({ error: 'Forbidden' }));
     return;
   }
 
