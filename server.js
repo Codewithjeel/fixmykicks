@@ -701,11 +701,14 @@ const server = http.createServer(async (req, res) => {
 
     const ext = path.extname(filePath).toLowerCase();
     const contentType = MIME_TYPES[ext] || 'application/octet-stream';
+    const isMedia = ['.jpg', '.jpeg', '.png', '.webp', '.svg', '.gif', '.ico', '.woff2', '.ttf'].includes(ext);
+
     res.writeHead(200, {
       'Content-Type': contentType,
-      'Cache-Control': 'no-cache, no-store, must-revalidate',
-      'Pragma': 'no-cache',
-      'Expires': '0'
+      'Cache-Control': isMedia
+        ? 'public, max-age=604800, stale-while-revalidate=86400'
+        : 'no-cache, no-store, must-revalidate',
+      ...(isMedia ? {} : { 'Pragma': 'no-cache', 'Expires': '0' })
     });
     fs.createReadStream(filePath).pipe(res);
   });
